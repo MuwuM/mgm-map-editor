@@ -136,6 +136,9 @@ p>label:after{
 #previewArea.hideCliff>#cliff{
 	display:none;
 }
+#previewArea.hideObjects>#objects{
+	display:none;
+}
 #previewArea.hideStartPos>#startpos{
 	display:none;
 }
@@ -153,6 +156,7 @@ p>label:after{
 #previewArea.hideTexture>#control>button.hideTexture:before,
 #previewArea.hideWater>#control>button.hideWater:before,
 #previewArea.hideCliff>#control>button.hideCliff:before,
+#previewArea.hideObjects>#control>button.hideObjects:before,
 #previewArea.hideStartPos>#control>button.hideStartPos:before
 {
 	content:'Show ';
@@ -164,28 +168,143 @@ p>label:after{
 	<canvas id="texture"></canvas>
 	<canvas id="water"></canvas>
 	<canvas id="cliff"></canvas>
+	<canvas id="objects"></canvas>
 	<canvas id="startpos"></canvas>
 	<div id="control">
 		<button class="hideHeightMap" onclick="togglePreviewArea('hideHeightMap')">Heights</button>
 		<button class="hideTexture" onclick="togglePreviewArea('hideTexture')">Surfaces</button>
 		<button class="hideWater" onclick="togglePreviewArea('hideWater')">Water</button>
 		<button class="hideCliff" onclick="togglePreviewArea('hideCliff')">Cliffs</button>
+		<button class="hideObjects" onclick="togglePreviewArea('hideObjects')">Objects</button>
 		<button class="hideStartPos" onclick="togglePreviewArea('hideStartPos')">Start positions</button>
 	</div>
 </div>
 <div style="width:40%;padding:0;margin:0;border:none;display:inline-block;">
-	<p><label for="#version-field">version</label><span id="version-field"></span></p>
-	<p><label for="#maxPlayers-field">maxPlayers</label><span id="maxPlayers-field"></span></p>
-	<p><label for="#width-field">width</label><span id="width-field"></span></p>
-	<p><label for="#height-field">height</label><span id="height-field"></span></p>
-	<p><label for="#altFactor-field">altFactor</label><span id="altFactor-field"></span></p>
-	<p><label for="#waterLevel-field">waterLevel</label><span id="waterLevel-field"></span></p>
-	<p><label for="#title-field">title</label><span id="title-field"></span></p>
-	<p><label for="#autor-field">autor</label><span id="autor-field"></span></p>
-	<p><label for="#description-field">description</label><span id="description-field"></span></p>
+	<p>
+		<label for="#version-field">version</label>
+		<select name="version-field" id="version-field" disabled>
+			<option value="1">1 [Glest format]</option>
+			<option value="2">2 [Megaglest format]</option>
+		</select>
+	</p>
+	<p>
+		<label for="#maxPlayers-field">maxPlayers</label>
+		<select name="maxPlayers-field" id="maxPlayers-field" disabled>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+		</select>
+	</p>
+	<p>
+		<label for="#width-field">width</label>
+		<select name="width-field" id="width-field" disabled>
+			<option value="16">16</option>
+			<option value="32">32</option>
+			<option value="64">64</option>
+			<option value="128">128</option>
+			<option value="256">256</option>
+			<option value="512">512</option>
+		</select>
+	</p>
+	<p>
+		<label for="#height-field">height</label>
+		<select name="height-field" id="height-field" disabled>
+			<option value="16">16</option>
+			<option value="32">32</option>
+			<option value="64">64</option>
+			<option value="128">128</option>
+			<option value="256">256</option>
+			<option value="512">512</option>
+		</select>
+	</p>
+	<p><label for="#altFactor-field">altFactor</label><input id="altFactor-field" type="text" readonly> (1.00 - 99.99 lower means more hill effect)</p>
+	<p><label for="#waterLevel-field">waterLevel</label>
+		<select name="waterLevel-field" id="waterLevel-field" disabled>
+			<option value="0">0</option>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+			<option value="11">11</option>
+			<option value="12">12</option>
+			<option value="13">13</option>
+			<option value="14">14</option>
+			<option value="15">15</option>
+			<option value="16">16</option>
+			<option value="17">17</option>
+			<option value="18">18</option>
+			<option value="19">19</option>
+			<option value="20">20</option>
+		</select>
+	</p>
+	<p><label for="#title-field">title</label><input id="title-field" type="text" maxlength="128" readonly></p>
+	<p><label for="#autor-field">autor</label><input id="autor-field" type="text" maxlength="128" readonly></p>
+	<p><label for="#description-field">description</label><textarea name="description-field" id="description-field" cols="64" rows="4"  maxlength="128" readonly></textarea></p>
 	<p><label for="#magic-field">magic</label><span id="magic-field"></span></p>
-	<p><label for="#cliffLevel-field">cliffLevel</label><span id="cliffLevel-field"></span></p>
-	<p><label for="#cameraHeight-field">cameraHeight</label><span id="cameraHeight-field"></span></p>
+	
+	<p><label for="#cliffLevel-field">cliffLevel</label>
+		<select name="cliffLevel-field" id="cliffLevel-field" disabled>
+			<option value="0">0</option>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+			<option value="11">11</option>
+			<option value="12">12</option>
+			<option value="13">13</option>
+			<option value="14">14</option>
+			<option value="15">15</option>
+			<option value="16">16</option>
+			<option value="17">17</option>
+			<option value="18">18</option>
+			<option value="19">19</option>
+			<option value="20">20</option>
+		</select>
+	</p>
+	<p><label for="#cameraHeight-field">cameraHeight</label>
+		<select name="cameraHeight-field" id="cameraHeight-field" disabled>
+			<option value="0">auto</option>
+			<option value="20">20</option>
+			<option value="21">21</option>
+			<option value="21">21</option>
+			<option value="22">22</option>
+			<option value="23">23</option>
+			<option value="24">24</option>
+			<option value="25">25</option>
+			<option value="26">26</option>
+			<option value="27">27</option>
+			<option value="28">28</option>
+			<option value="29">29</option>
+			<option value="30">30</option>
+			<option value="31">31</option>
+			<option value="32">32</option>
+			<option value="33">33</option>
+			<option value="34">34</option>
+			<option value="35">35</option>
+			<option value="36">36</option>
+			<option value="37">37</option>
+			<option value="38">38</option>
+			<option value="39">39</option>
+			<option value="40">40</option>
+		</select>
+	</p>
 	<p><label for="#meta-field">meta</label><span id="meta-field"></span></p>
 	<p><a id="btnSaveHeightmap">Save Heightmap</a> <a id="btnSaveMap">Save Map</a> <button onclick="contrastHighmap(10)">increase contrast</button> <button onclick="contrastHighmap(-10)">reduce contrast</button></p>
 </div>
@@ -219,6 +338,9 @@ function rgbToHex(r, g, b) {
   
   
 function getCanvasWithContext(id){
+	if(!map.maxPlayers){
+		return;
+	}
 	var renderer = {};
 	renderer.canvas = document.getElementById(id);
 	renderer.scale = 512 / Math.max(map.width,map.height);
@@ -241,6 +363,29 @@ function getCanvasWithContext(id){
 			  }
 			renderer.ctx.putImageData(imgData,0,0);	
 		}
+		renderer.renderObjects = function(callback/*({x,y,cell}) => {r,g,b,a}*/){
+			renderer.ctx.canvas.width  = map.width*renderer.scale;
+			renderer.ctx.canvas.height = map.height*renderer.scale;
+			var imgData=renderer.ctx.createImageData(map.width*renderer.scale,map.height*renderer.scale);
+			renderer.ctx.putImageData(imgData,0,0);	
+			for (var cellID = 0 ;cellID < map.width*map.height ; cellID += 1){
+				var cellPos = descale(cellID,1);
+				var padding = Math.floor(renderer.scale / 4);
+				var area = {
+					x: cellPos.x*renderer.scale+padding,
+					y: cellPos.y*renderer.scale+padding,
+					w: renderer.scale-(padding*2),
+					h: renderer.scale-(padding*2)
+				};
+				var cell = callback({
+					x:cellPos.x,
+					y:cellPos.y,
+					cell:map.map[cellPos.x]&&map.map[cellPos.x][cellPos.y],
+					ctx:renderer.ctx,
+					area:area
+				});
+			  }
+		}
 		return renderer;
 	}
 	return false;
@@ -260,9 +405,6 @@ document.getElementById('btnSaveMap').addEventListener("click", function( event 
 	}, false);
   
 function renderHeightMap(){
-	if(!map.maxPlayers){
-		return;
-	}
 	var renderer = getCanvasWithContext('highmap');	
 	if(!renderer){
 		return;
@@ -292,9 +434,6 @@ var textures = [
 	{r:89,g:64,b:38,name:'Custom'}
 ];
 function renderSurfaces(){
-	if(!map.maxPlayers){
-		return;
-	}
 	var renderer = getCanvasWithContext('texture');	
 	if(!renderer){
 		return;
@@ -310,25 +449,7 @@ function renderSurfaces(){
 		res.b=tex.b;
 		res.a=200;
 		return res;
-	});
-	return;
-	renderer.ctx.canvas.width  = map.width;
-	renderer.ctx.canvas.height = map.height;
-
-	var imgData=renderer.ctx.createImageData(map.width,map.height);
-	for (var i=0;i<imgData.data.length;i+=4)
-	  {
-		var cellID = i / 4;
-		var tex = textures[map.map[(cellID % map.width)][(Math.floor(cellID / map.width))]['s']];
-		if(!tex){
-			tex = textures[0];
-		}
-		imgData.data[i+0]=tex.r;
-		imgData.data[i+1]=tex.g;
-		imgData.data[i+2]=tex.b;
-		imgData.data[i+3]=200;
-	  }
-	renderer.ctx.putImageData(imgData,0,0);	
+	});	
 }
 
 
@@ -348,9 +469,6 @@ function checkIsCliff(x,y){
 }
 
 function renderCliff(){
-	if(!map.maxPlayers){
-		return;
-	}
 	var renderer = getCanvasWithContext('cliff');	
 	if(!renderer){
 		return;
@@ -377,6 +495,78 @@ function renderCliff(){
 	});
 }
 
+function canvasDrawX(ctx,x,y,w,h,color){
+	ctx.beginPath();
+	ctx.moveTo(x, y);
+	ctx.lineWidth = 1;
+	ctx.lineTo(x+w, y+h);
+	ctx.closePath();
+	ctx.strokeStyle = color;
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.moveTo(x, y + h);
+	ctx.lineWidth = 1;
+	ctx.lineTo(x+w, y);
+	ctx.closePath();
+	ctx.strokeStyle = color;
+	ctx.stroke();
+}
+
+function renderObjects(){
+	var renderer = getCanvasWithContext('objects');	
+	if(!renderer){
+		return;
+	}
+	renderer.renderObjects(function(d){ 
+		if(d.cell.o === 1){
+			d.ctx.fillStyle="#FF0000";
+			d.ctx.fillRect(d.area.x,d.area.y,d.area.w,d.area.h); 
+		}else if(d.cell.o === 2){
+			d.ctx.fillStyle="#FFFFFF";
+			d.ctx.fillRect(d.area.x,d.area.y,d.area.w,d.area.h); 
+		}else if(d.cell.o === 3){
+			d.ctx.fillStyle="#9370DB";
+			d.ctx.fillRect(d.area.x,d.area.y,d.area.w,d.area.h); 
+		}else if(d.cell.o === 4){
+			d.ctx.fillStyle="#0000cc";
+			d.ctx.fillRect(d.area.x,d.area.y,d.area.w,d.area.h); 
+		}else if(d.cell.o === 5){
+			d.ctx.fillStyle="#cccccc";
+			d.ctx.fillRect(d.area.x,d.area.y,d.area.w,d.area.h); 
+		}else if(d.cell.o === 6){
+			d.ctx.fillStyle="#FFA500";
+			d.ctx.fillRect(d.area.x,d.area.y,d.area.w,d.area.h); 
+		}else if(d.cell.o === 7){
+			d.ctx.fillStyle="#7fffd4";
+			d.ctx.fillRect(d.area.x,d.area.y,d.area.w,d.area.h); 
+		}else if(d.cell.o === 8){
+			d.ctx.fillStyle="#8b2323";
+			d.ctx.fillRect(d.area.x,d.area.y,d.area.w,d.area.h); 
+		}else if(d.cell.o === 9){
+			d.ctx.fillStyle="#7fff00";
+			d.ctx.fillRect(d.area.x,d.area.y,d.area.w,d.area.h); 
+		}else if(d.cell.o === 10){
+			d.ctx.fillStyle="#ff1493";
+			d.ctx.fillRect(d.area.x,d.area.y,d.area.w,d.area.h); 
+		}else if(d.cell.o === 11){
+			canvasDrawX(d.ctx,d.area.x,d.area.y,d.area.w,d.area.h,'#ffb90f');
+		}else if(d.cell.o === 12){
+			canvasDrawX(d.ctx,d.area.x,d.area.y,d.area.w,d.area.h,'#bebebe');
+		}else if(d.cell.o === 13){
+			canvasDrawX(d.ctx,d.area.x,d.area.y,d.area.w,d.area.h,'#cc0000');
+		}else if(d.cell.o === 14){
+			canvasDrawX(d.ctx,d.area.x,d.area.y,d.area.w,d.area.h,'#0000cc');
+		}else if(d.cell.o === 15){
+			canvasDrawX(d.ctx,d.area.x,d.area.y,d.area.w,d.area.h,'#008b8b');
+		}else if(d.cell.o === 0){
+			// do nothing
+		}else{
+			console.log('Not supported object', d.cell.o);
+		}
+	});
+}
+
+
 function descale(cellID,scale){
 	var dividor = map.width * scale;
 	return{
@@ -385,9 +575,6 @@ function descale(cellID,scale){
 	};
 }
 function renderWater(){
-	if(!map.maxPlayers){
-		return;
-	}
 	var renderer = getCanvasWithContext('water');	
 	if(!renderer){
 		return;
@@ -424,9 +611,6 @@ var playerColors = [
 ];
 
 function renderStartPos(){
-	if(!map.maxPlayers){
-		return;
-	}
 	var renderer = getCanvasWithContext('startpos');	
 	if(!renderer){
 		return;
@@ -457,30 +641,40 @@ function renderMapToCanvas(){
 	if(!map.maxPlayers){
 		return;
 	}
-	document.getElementById('version-field').innerHTML = map.version;
-	document.getElementById('maxPlayers-field').innerHTML = map.maxPlayers;
-	document.getElementById('width-field').innerHTML = map.width;
-	document.getElementById('height-field').innerHTML = map.height;
+	document.getElementById('version-field').value = map.version;
+	document.getElementById('maxPlayers-field').value = map.maxPlayers;
+	document.getElementById('width-field').value = map.width;
+	document.getElementById('height-field').value = map.height;
 	if(map.altFactor > 100){
-		document.getElementById('altFactor-field').innerHTML = (map.altFactor / 100);
+		document.getElementById('altFactor-field').value = (map.altFactor / 100);
 	}else{
-		document.getElementById('altFactor-field').innerHTML = map.altFactor;
+		document.getElementById('altFactor-field').maxLength = map.altFactor;
 	}
-	document.getElementById('waterLevel-field').innerHTML = map.waterLevel;
-	document.getElementById('title-field').innerHTML = map.title;
-	document.getElementById('autor-field').innerHTML = map.autor;
-	document.getElementById('description-field').innerHTML = map.description;
+	document.getElementById('waterLevel-field').value = map.waterLevel;
+	document.getElementById('title-field').value = map.title;
+	document.getElementById('autor-field').value = map.autor;
+	document.getElementById('description-field').value = map.description;
 	if(map.version > 1){
+		document.getElementById('description-field').maxLength = 128;
+		document.getElementById('description-field').rows = 2;
+		
 		document.getElementById('magic-field').parentElement.style.display = 'block';
 		document.getElementById('cliffLevel-field').parentElement.style.display = 'block';
 		document.getElementById('cameraHeight-field').parentElement.style.display = 'block';
 		document.getElementById('meta-field').parentElement.style.display = 'block';
 		
 		document.getElementById('magic-field').innerHTML = '0x'+map.magic.toString(16);
-		document.getElementById('cliffLevel-field').innerHTML = map.cliffLevel;
-		document.getElementById('cameraHeight-field').innerHTML = map.cameraHeight;
+		document.getElementById('cliffLevel-field').value = map.cliffLevel;
+		if(map.cameraHeight < 20){
+			document.getElementById('cameraHeight-field').value = 0;
+		}else{
+			document.getElementById('cameraHeight-field').value = Math.min(map.cameraHeight,40);
+		}
 		document.getElementById('meta-field').innerHTML = map.meta;
 	}else{
+		document.getElementById('description-field').value = 256;
+		document.getElementById('description-field').rows = 4;
+		
 		document.getElementById('magic-field').parentElement.style.display = 'none';
 		document.getElementById('cliffLevel-field').parentElement.style.display = 'none';
 		document.getElementById('cameraHeight-field').parentElement.style.display = 'none';
@@ -489,6 +683,7 @@ function renderMapToCanvas(){
 	setTimeout(renderHeightMap,1);
 	setTimeout(renderSurfaces,1);
 	setTimeout(renderCliff,1);
+	setTimeout(renderObjects,1);
 	setTimeout(renderWater,1);
 	setTimeout(renderStartPos,1);	
 }
