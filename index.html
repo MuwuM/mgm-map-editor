@@ -306,7 +306,7 @@ p>label:after{
 		</select>
 	</p>
 	<p><label for="#meta-field">meta</label><span id="meta-field"></span></p>
-	<p><a id="btnSaveHeightmap">Save Heightmap</a> <a id="btnSaveMap">Save Map</a> <button onclick="contrastHighmap(10)">increase contrast</button> <button onclick="contrastHighmap(-10)">reduce contrast</button></p>
+	<p><a id="btnSaveHeightmap">Save Heightmap</a> <a id="btnSaveMap">Save Map</a> <button onclick="contrastHighmap(10)">increase contrast</button> <button onclick="contrastHighmap(-10)">reduce contrast</button> <button onclick="randomIsland()">Random island</button></p>
 </div>
 <script>
   function togglePreviewArea(hideClass){
@@ -440,7 +440,7 @@ function renderSurfaces(){
 	}
 	renderer.renderScaled(function(d){ 
 		var res ={};
-		var tex = textures[d.cell.s];
+		var tex = textures[d.cell.s-1];
 		if(!tex){
 			tex = textures[0];
 		}
@@ -849,7 +849,9 @@ function renderMapToCanvas(){
 		}else{
 			writeString(handle,map.description,128);
 			writeInt32(handle,map.magic);
-			writeString(handle,map.meta,124);
+			writeInt32(handle,map.cliffLevel);
+			writeInt32(handle,map.cameraHeight);
+			writeString(handle,map.meta,116);
 		}
 		for(var i = 0; i < map.maxPlayers;i++){
 			var loc = map.startLocation[i];
@@ -892,6 +894,160 @@ function renderMapToCanvas(){
 		
 		return handle.data;
 	};
+
+function closeCells(x,y,type){
+	var cells = 0;
+	for(var j=y-1;j<=y+1;j++){
+		for(var i=x-1;i<=x+1;i++){
+			if(map.map[i] && map.map[i][j] && map.map[i][j].type == type && !(i==y && j==x)){
+				cells++;
+			}else if((!map.map[i] ||!map.map[i][j]) && !(i==y && j==x)){/*makes island*/
+				cells++;
+			}
+		}
+	}
+	return cells;
+}	
+
+var changes = 1;
+//var rule = {'water':[5,6]};
+var rule = {'water':[5,6]};
+
+function next(){
+	if(changes <= 0){
+		//fillOcean();
+		map.startLocation.forEach(ensureStatpointLand);
+		return;
+	}
+	changes = 0;
+	for(var x=0;x<map.width;x++){
+		for(var y=0;y<map.height;y++){
+			var waterCells = closeCells(x,y,'water');
+			if(waterCells < rule['water'][0] && map.map[x][y].type != 'land'){
+				map.map[x][y].type = 'land';
+				changes++;
+			}else if(waterCells > rule['water'][1] && map.map[x][y].type == 'land'){
+				map.map[x][y].type = 'water';
+				changes++;
+			}
+			if(map.map[x][y].type === 'water'){
+				map.map[x][y].h = Math.random()*(map.waterLevel - 1.5);
+			}else if(map.cliffLevel){
+				map.map[x][y].h = map.waterLevel + Math.random()*(map.cliffLevel);
+			}else{
+				map.map[x][y].h = map.waterLevel + Math.random()*(20-map.waterLevel);
+			}
+		}
+	}
+	map.startLocation.forEach(ensureStatpointLand);
+	setTimeout(renderMapToCanvas,1);
+	setTimeout(next,1);
+}
+
+function ensureStatpointLand(loc,index){
+	var size = 8;
+	var resourceMargin = 2;
+	var offsetX = 0;
+	var offsetY = 0;
+	
+	if(loc.x-size < 0){
+		offsetX = 0-(loc.x-size);
+	}
+	if(loc.x+size >= map.width){
+		offsetX = 0-(loc.x+size+1-map.width);
+	}
+	if(loc.y-size < 0){
+		offsetY = 0-(loc.y-size);
+	}
+	if(loc.y+size >= map.height){
+		offsetY = 0-(loc.y+size+1-map.height);
+	}
+	
+	loc.x = loc.x + offsetX;
+	loc.y = loc.y + offsetY;
+	
+	console.log(loc.x,loc.y,map.map[loc.x][loc.y],offsetX,offsetY);
+	for(var i = loc.x - size; i <= loc.x + size; i++){
+		for(var j = loc.y - size; j <= loc.y + size; j++){
+			if(!map.map[i] || !map.map[i][j]){
+				console.log('loc',loc.x,loc.y,'offset',offsetX,offsetY,'i',i,'j',j,map.map[i]);
+			}
+			map.map[i][j].type = 'land';
+			map.map[i][j].h = 10;
+			if(map.cliffLevel > 0){
+				map.map[i][j].h = map.waterLevel + (map.cliffLevel/2);
+			}
+			map.map[i][j].s = 3;
+			if(i === loc.x - size || i === loc.x + size || j === loc.y - size || j === loc.y + size){
+				map.map[i][j].s = 2;
+			}
+		}
+	}
+	for(var i = loc.x - size+resourceMargin; i <= loc.x - resourceMargin; i++){
+		for(var j = loc.y - size+resourceMargin; j <= loc.y -resourceMargin; j++){
+			if(-i-j > -loc.x - loc.y + size){
+				map.map[i][j].o = 11;
+			}
+		}
+	}
+	for(var i = loc.x + resourceMargin; i <= loc.x +size-resourceMargin; i++){
+		for(var j = loc.y + resourceMargin; j <= loc.y + size-resourceMargin; j++){
+			if(i+j > loc.x + loc.y + size){
+				map.map[i][j].o = 12;
+			}
+		}
+	}
+	for(var i = loc.x + resourceMargin; i <= loc.x +size-resourceMargin; i++){
+		for(var j = loc.y - size+resourceMargin; j <= loc.y -resourceMargin; j++){
+			if(i-j > loc.x - loc.y + size){
+				map.map[i][j].o = 1;
+			}
+		}
+	}
+	for(var i = loc.x - size+resourceMargin; i <= loc.x - resourceMargin; i++){
+		for(var j = loc.y + resourceMargin; j <= loc.y + size-resourceMargin; j++){
+			if(-i+j > -loc.x + loc.y + size){
+				map.map[i][j].o = 2;
+			}
+		}
+	}
+	
+	
+}
+
+function randomIsland(){
+	if(map.width <= 0 || map.height <= 0||map.maxPlayer < 1||!map.startLocation){
+		return;
+	}
+	map.map = [];
+	map.title = 'generaded_'+Math.random();
+	map.author = 'http://muwns.eu/mgm/';
+	for(var i=0;i<map.width;i++){
+		map.map[i] = [];
+		for(var j=0;j<map.height;j++){
+			map.map[i][j] = {};
+			map.map[i][j].type = (Math.random()<0.4)?'land':'water';
+			if(i==0||j==0||i==map.width-1||j==map.height-1){
+				map.map[i][j].type = 'water';
+			}
+			if(map.map[i][j].type === 'water'){
+				map.map[i][j].h = 0;
+			}else{
+				map.map[i][j].h = 10;
+			}
+			map.map[i][j].s = 1;
+			map.map[i][j].o = 0;
+		}
+	}
+	map.startLocation.forEach(ensureStatpointLand);
+	
+	changes = 1;
+	
+	
+	setTimeout(renderMapToCanvas,1);
+	setTimeout(next,1);
+	
+}
 
   function handleDragOver(evt) {
     evt.stopPropagation();
