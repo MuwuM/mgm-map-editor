@@ -648,7 +648,7 @@ function renderMapToCanvas(){
 	if(map.altFactor > 100){
 		document.getElementById('altFactor-field').value = (map.altFactor / 100);
 	}else{
-		document.getElementById('altFactor-field').maxLength = map.altFactor;
+		document.getElementById('altFactor-field').value = map.altFactor;
 	}
 	document.getElementById('waterLevel-field').value = map.waterLevel;
 	document.getElementById('title-field').value = map.title;
