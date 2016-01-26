@@ -15,9 +15,9 @@
   //   example 2: pack('H4', '2345')
   //   returns 2: '#E'
   //   example 3: pack('H*', 'D5')
-  //   returns 3: 'Õ'
+  //   returns 3: 'Ã•'
   //   example 4: pack('d', -100.876)
-  //   returns 4: "\u0000\u0000\u0000\u0000\u00008YÀ"
+  //   returns 4: "\u0000\u0000\u0000\u0000\u00008YÃ€"
 function pack(a){for(var h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,b=0,c=1,d="",e="",f=0,g=[];b<a.length;){for(h=a.charAt(b),i="",b++;b<a.length&&null!==a.charAt(b).match(/[\d\*]/);)i+=a.charAt(b),b++;switch(""===i&&(i="1"),h){case"a":case"A":if("undefined"==typeof arguments[c])throw new Error("Warning:  pack() Type "+h+": not enough arguments");for(e=String(arguments[c]),"*"===i&&(i=e.length),f=0;i>f;f++)d+="undefined"==typeof e[f]?"a"===h?String.fromCharCode(0):" ":e[f];c++;break;case"h":case"H":if("undefined"==typeof arguments[c])throw new Error("Warning: pack() Type "+h+": not enough arguments");if(e=arguments[c],"*"===i&&(i=e.length),i>e.length)throw new Error("Warning: pack() Type "+h+": not enough characters in string");for(f=0;i>f;f+=2)j=e[f],j+=f+1>=i||"undefined"==typeof e[f+1]?"0":e[f+1],"h"===h&&(j=j[1]+j[0]),d+=String.fromCharCode(parseInt(j,16));c++;break;case"c":case"C":if("*"===i&&(i=arguments.length-c),i>arguments.length-c)throw new Error("Warning:  pack() Type "+h+": too few arguments");for(f=0;i>f;f++)d+=String.fromCharCode(arguments[c]),c++;break;case"s":case"S":case"v":if("*"===i&&(i=arguments.length-c),i>arguments.length-c)throw new Error("Warning:  pack() Type "+h+": too few arguments");for(f=0;i>f;f++)d+=String.fromCharCode(255&arguments[c]),d+=String.fromCharCode(arguments[c]>>8&255),c++;break;case"n":if("*"===i&&(i=arguments.length-c),i>arguments.length-c)throw new Error("Warning: pack() Type "+h+": too few arguments");for(f=0;i>f;f++)d+=String.fromCharCode(arguments[c]>>8&255),d+=String.fromCharCode(255&arguments[c]),c++;break;case"i":case"I":case"l":case"L":case"V":if("*"===i&&(i=arguments.length-c),i>arguments.length-c)throw new Error("Warning:  pack() Type "+h+": too few arguments");for(f=0;i>f;f++)d+=String.fromCharCode(255&arguments[c]),d+=String.fromCharCode(arguments[c]>>8&255),d+=String.fromCharCode(arguments[c]>>16&255),d+=String.fromCharCode(arguments[c]>>24&255),c++;break;case"N":if("*"===i&&(i=arguments.length-c),i>arguments.length-c)throw new Error("Warning:  pack() Type "+h+": too few arguments");for(f=0;i>f;f++)d+=String.fromCharCode(arguments[c]>>24&255),d+=String.fromCharCode(arguments[c]>>16&255),d+=String.fromCharCode(arguments[c]>>8&255),d+=String.fromCharCode(255&arguments[c]),c++;break;case"f":case"d":if(k=23,l=8,"d"===h&&(k=52,l=11),"*"===i&&(i=arguments.length-c),i>arguments.length-c)throw new Error("Warning:  pack() Type "+h+": too few arguments");for(f=0;i>f;f++){for(e=arguments[c],n=Math.pow(2,l-1)-1,o=-n+1,p=n,q=o-k,r=isNaN(w=parseFloat(e))||w===-(1/0)||w===+(1/0)?w:0,s=0,t=2*n+1+k+3,u=new Array(t),v=(w=0!==r?0:w)<0,w=Math.abs(w),x=Math.floor(w),y=w-x,C=t;C;)u[--C]=0;for(C=n+2;x&&C;)u[--C]=x%2,x=Math.floor(x/2);for(C=n+1;y>0&&C;--y)u[++C]=((y*=2)>=1)-0;for(C=-1;++C<t&&!u[C];);if(u[(z=k-1+(C=(s=n+1-C)>=o&&p>=s?C+1:n+1-(s=o-1)))+1]){if(!(A=u[z]))for(B=z+2;!A&&t>B;A=u[B++]);for(B=z+1;A&&--B>=0;(u[B]=!u[B]-0)&&(A=0));}for(C=0>C-2?-1:C-3;++C<t&&!u[C];);for((s=n+1-C)>=o&&p>=s?++C:o>s&&(C=n+1-(s=o-1)),(x||0!==r)&&(s=p+1,C=n+2,r===-(1/0)?v=1:isNaN(r)&&(u[C]=1)),w=Math.abs(s+n),D="",B=l+1;--B;)D=w%2+D,w=w>>=1;for(w=0,B=0,C=(D=(v?"1":"0")+D+u.slice(C,C+k).join("")).length,g=[];C;)w+=(1<<B)*D.charAt(--C),7===B&&(g[g.length]=String.fromCharCode(w),w=0),B=(B+1)%8;g[g.length]=w?String.fromCharCode(w):"",d+=g.join(""),c++}break;case"x":if("*"===i)throw new Error("Warning: pack(): Type x: '*' ignored");for(f=0;i>f;f++)d+=String.fromCharCode(0);break;case"X":if("*"===i)throw new Error("Warning: pack(): Type X: '*' ignored");for(f=0;i>f;f++){if(0===d.length)throw new Error("Warning: pack(): Type X: outside of string");d=d.substring(0,d.length-1)}break;case"@":if("*"===i)throw new Error("Warning: pack(): Type X: '*' ignored");if(i>d.length)for(m=i-d.length,f=0;m>f;f++)d+=String.fromCharCode(0);i<d.length&&(d=d.substring(0,i));break;default:throw new Error("Warning:  pack() Type "+h+": unknown format code")}}if(c<arguments.length)throw new Error("Warning: pack(): "+(arguments.length-c)+" arguments unused");return d}
 </script>
 <script>
@@ -33,7 +33,7 @@ function pack(a){for(var h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,b=0,c=1,d
   // %        note 4: 'machine dependant byte order and size' aren't
   // %        note 5: applicable for JavaScript unpack works as on a 32bit,
   // %        note 6: little endian machine
-  // *     example 1: unpack('d', "\u0000\u0000\u0000\u0000\u00008YÀ");
+  // *     example 1: unpack('d', "\u0000\u0000\u0000\u0000\u00008YÃ€");
   // *     returns 1: { "": -100.875 }
 function unpack(a,b){for(var c=0,d=0,e={},f="",g="",h="",i="",j=0,k=0,l="",m=0,n=0,o=0,p=function(a,b,c){for(var d=[],e=a.length;e;e-=1)for(var f=a[e-1],g=8;g;g-=1)d.push(f%2?1:0),f>>=1;d.reverse();var h=d.join(""),i=(1<<b-1)-1,j=parseInt(h.substring(0,1),2)?-1:1,k=parseInt(h.substring(1,1+b),2),l=parseInt(h.substring(1+b),2);return k===(1<<b)-1?0!==l?NaN:j*(1/0):k>0?j*Math.pow(2,k-i)*(1+l/Math.pow(2,c)):0!==l?j*Math.pow(2,-(i-1))*(l/Math.pow(2,c)):0*j};c<a.length;){for(f=a.charAt(c),g="",c++;c<a.length&&null!==a.charAt(c).match(/[\d\*]/);)g+=a.charAt(c),c++;for(""===g&&(g="1"),h="";c<a.length&&"/"!==a.charAt(c);)h+=a.charAt(c),c++;switch("/"===a.charAt(c)&&c++,f){case"a":case"A":g="*"===g?b.length-d:parseInt(g,10),i=b.substr(d,g),d+=g,"a"===f?currentResult=i.replace(/\0+$/,""):currentResult=i.replace(/ +$/,""),e[h]=currentResult;break;case"h":case"H":if(g="*"===g?b.length-d:parseInt(g,10),i=b.substr(d,g),d+=g,g>i.length)throw new Error("Warning: unpack(): Type "+f+": not enough input, need "+g);for(currentResult="",j=0;j<i.length;j++)l=i.charCodeAt(j).toString(16),"h"===f&&(l=l[1]+l[0]),currentResult+=l;e[h]=currentResult;break;case"c":case"C":for(g="*"===g?b.length-d:parseInt(g,10),i=b.substr(d,g),d+=g,j=0;j<i.length;j++)currentResult=i.charCodeAt(j),"c"===f&&currentResult>=128&&(currentResult-=256),e[h+(g>1?j+1:"")]=currentResult;break;case"S":case"s":case"v":for(g="*"===g?(b.length-d)/2:parseInt(g,10),i=b.substr(d,2*g),d+=2*g,j=0;j<i.length;j+=2)currentResult=((255&i.charCodeAt(j+1))<<8)+(255&i.charCodeAt(j)),"s"===f&&currentResult>=32768&&(currentResult-=65536),e[h+(g>1?j/2+1:"")]=currentResult;break;case"n":for(g="*"===g?(b.length-d)/2:parseInt(g,10),i=b.substr(d,2*g),d+=2*g,j=0;j<i.length;j+=2)currentResult=((255&i.charCodeAt(j))<<8)+(255&i.charCodeAt(j+1)),e[h+(g>1?j/2+1:"")]=currentResult;break;case"i":case"I":case"l":case"L":case"V":for(g="*"===g?(b.length-d)/4:parseInt(g,10),i=b.substr(d,4*g),d+=4*g,j=0;j<i.length;j+=4)currentResult=((255&i.charCodeAt(j+3))<<24)+((255&i.charCodeAt(j+2))<<16)+((255&i.charCodeAt(j+1))<<8)+(255&i.charCodeAt(j)),e[h+(g>1?j/4+1:"")]=currentResult;break;case"N":for(g="*"===g?(b.length-d)/4:parseInt(g,10),i=b.substr(d,4*g),d+=4*g,j=0;j<i.length;j+=4)currentResult=((255&i.charCodeAt(j))<<24)+((255&i.charCodeAt(j+1))<<16)+((255&i.charCodeAt(j+2))<<8)+(255&i.charCodeAt(j+3)),e[h+(g>1?j/4+1:"")]=currentResult;break;case"f":case"d":for(n=8,m="f"===f?23:52,o=4,"d"===f&&(n=11,o=8),g="*"===g?(b.length-d)/o:parseInt(g,10),i=b.substr(d,g*o),d+=g*o,j=0;j<i.length;j+=o){for(b=i.substr(j,o),bytes=[],k=b.length-1;k>=0;--k)bytes.push(b.charCodeAt(k));e[h+(g>1?j/4+1:"")]=p(bytes,n,m)}break;case"x":case"X":case"@":g="*"===g?b.length-d:parseInt(g,10),g>0&&("X"===f?d-=g:"x"===f?d+=g:d=g);break;default:throw new Error("Warning:  unpack() Type "+f+": unknown format code")}}return e}
 </script>
@@ -182,14 +182,14 @@ p>label:after{
 <div style="width:40%;padding:0;margin:0;border:none;display:inline-block;">
 	<p>
 		<label for="#version-field">version</label>
-		<select name="version-field" id="version-field" disabled>
+		<select name="version-field" id="version-field" onchange="updateFromFields()">
 			<option value="1">1 [Glest format]</option>
 			<option value="2">2 [Megaglest format]</option>
 		</select>
 	</p>
 	<p>
 		<label for="#maxPlayers-field">maxPlayers</label>
-		<select name="maxPlayers-field" id="maxPlayers-field" disabled>
+		<select name="maxPlayers-field" id="maxPlayers-field" onchange="updateFromFields()">
 			<option value="1">1</option>
 			<option value="2">2</option>
 			<option value="3">3</option>
@@ -202,7 +202,7 @@ p>label:after{
 	</p>
 	<p>
 		<label for="#width-field">width</label>
-		<select name="width-field" id="width-field" disabled>
+		<select name="width-field" id="width-field" onchange="updateFromFields()">
 			<option value="16">16</option>
 			<option value="32">32</option>
 			<option value="64">64</option>
@@ -213,7 +213,7 @@ p>label:after{
 	</p>
 	<p>
 		<label for="#height-field">height</label>
-		<select name="height-field" id="height-field" disabled>
+		<select name="height-field" id="height-field" onchange="updateFromFields()">
 			<option value="16">16</option>
 			<option value="32">32</option>
 			<option value="64">64</option>
@@ -222,9 +222,9 @@ p>label:after{
 			<option value="512">512</option>
 		</select>
 	</p>
-	<p><label for="#altFactor-field">altFactor</label><input id="altFactor-field" type="text" readonly> (1.00 - 99.99 lower means more hill effect)</p>
+	<p><label for="#altFactor-field">altFactor</label><input id="altFactor-field" type="text" onchange="updateFromFields()"> (1.00 - 99.99 lower means more hill effect)</p>
 	<p><label for="#waterLevel-field">waterLevel</label>
-		<select name="waterLevel-field" id="waterLevel-field" disabled>
+		<select name="waterLevel-field" id="waterLevel-field" onchange="updateFromFields()">
 			<option value="0">0</option>
 			<option value="1">1</option>
 			<option value="2">2</option>
@@ -248,13 +248,13 @@ p>label:after{
 			<option value="20">20</option>
 		</select>
 	</p>
-	<p><label for="#title-field">title</label><input id="title-field" type="text" maxlength="128" readonly></p>
-	<p><label for="#autor-field">autor</label><input id="autor-field" type="text" maxlength="128" readonly></p>
-	<p><label for="#description-field">description</label><textarea name="description-field" id="description-field" cols="64" rows="4"  maxlength="128" readonly></textarea></p>
+	<p><label for="#title-field">title</label><input id="title-field" type="text" maxlength="128" onchange="updateFromFields()"></p>
+	<p><label for="#autor-field">autor</label><input id="autor-field" type="text" maxlength="128" onchange="updateFromFields()"></p>
+	<p><label for="#description-field">description</label><textarea name="description-field" id="description-field" cols="64" rows="4"  maxlength="128" onchange="updateFromFields()"></textarea></p>
 	<p><label for="#magic-field">magic</label><span id="magic-field"></span></p>
 	
 	<p><label for="#cliffLevel-field">cliffLevel</label>
-		<select name="cliffLevel-field" id="cliffLevel-field" disabled>
+		<select name="cliffLevel-field" id="cliffLevel-field" onchange="updateFromFields()">
 			<option value="0">0</option>
 			<option value="1">1</option>
 			<option value="2">2</option>
@@ -279,7 +279,7 @@ p>label:after{
 		</select>
 	</p>
 	<p><label for="#cameraHeight-field">cameraHeight</label>
-		<select name="cameraHeight-field" id="cameraHeight-field" disabled>
+		<select name="cameraHeight-field" id="cameraHeight-field" onchange="updateFromFields()">
 			<option value="0">auto</option>
 			<option value="20">20</option>
 			<option value="21">21</option>
@@ -306,6 +306,12 @@ p>label:after{
 		</select>
 	</p>
 	<p><label for="#meta-field">meta</label><span id="meta-field"></span></p>
+	<p>
+		<label for="#startLocation-field">startLocation</label>
+		<ul id="startLocation-field">
+			<li><span>Player 0</span><input id="startLocation-field-player-0-x" type="text" onchange="updateFromFields()">x<input id="startLocation-field-player-0-y" type="text" onchange="updateFromFields()"></li>
+		</ul>
+	</p>
 	<p><a id="btnSaveHeightmap">Save Heightmap</a> <a id="btnSaveMap">Save Map</a> <button onclick="contrastHighmap(10)">increase contrast</button> <button onclick="contrastHighmap(-10)">reduce contrast</button> </p>
 	<p><button onclick="randomIsland()">Random island</button> ( requires a map for StartLocation )</p>
 </div>
@@ -335,7 +341,51 @@ function componentToHex(c) {
 function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
-  var map = {};
+
+var map = {};
+
+function init(){
+  map = {
+	version:2,
+	maxPlayers:8,
+	width:64,
+	height:64,
+	altFactor:1,
+	waterLevel:0,
+	title:'',
+	autor:'',
+	description:'',
+	magic: parseInt("1020304", 16),
+	cliffLevel: 0,
+	cameraHeight:0,
+	meta:'',
+	map:[],
+	startLocation:[]
+  };
+	for(var p=0; p < map.maxPlayers; p++){
+		var x = Math.round((map.width/4)*(p+0.5));
+		var y = Math.round((map.height/4)*(p+0.5));
+		if(p >3){
+			x = x;
+			y = map.height*2 - y;
+		}
+		map.startLocation[p] = {
+			x:x % map.width,
+			y:y % map.height
+		};
+	}
+	for(var i=0; i < map.width; i++){
+		map.map[i] = [];
+		for(var j=0;j < map.height;j++){
+			map.map[i][j]={
+				h:10,
+				s:1,
+				o:0
+			};
+		}
+	}
+	setTimeout(renderMapToCanvas,1);
+  }
   
   
 function getCanvasWithContext(id){
@@ -673,7 +723,7 @@ function renderMapToCanvas(){
 		}
 		document.getElementById('meta-field').innerHTML = map.meta;
 	}else{
-		document.getElementById('description-field').value = 256;
+		document.getElementById('description-field').maxLength = 256;
 		document.getElementById('description-field').rows = 4;
 		
 		document.getElementById('magic-field').parentElement.style.display = 'none';
@@ -681,6 +731,12 @@ function renderMapToCanvas(){
 		document.getElementById('cameraHeight-field').parentElement.style.display = 'none';
 		document.getElementById('meta-field').parentElement.style.display = 'none';
 	}
+	//
+	var startLocationsHTML =[];
+	map.startLocation.forEach(function(loc,index){
+		startLocationsHTML.push('<li style="margin-bottom:8px;"><span style="color:'+playerColors[index]+'; background:#cdcdcd;padding:5px;">Player '+(index+1)+'</span>:  X = <input id="startLocation-field-player-'+index+'-x" type="number" value="'+loc.x+'" onchange="updateFromFields()" min="0" max="'+(map.width-1)+'"> Y = <input id="startLocation-field-player-'+index+'-y" type="number" value="'+loc.y+'" onchange="updateFromFields()" min="0" max="'+(map.height-1)+'"></li>');
+	});
+	document.getElementById('startLocation-field').innerHTML = startLocationsHTML.join('');
 	setTimeout(renderHeightMap,1);
 	setTimeout(renderSurfaces,1);
 	setTimeout(renderCliff,1);
@@ -829,6 +885,117 @@ function renderMapToCanvas(){
 				console.log(map);
 				setTimeout(renderMapToCanvas,1);
 			}
+  };
+  
+  var supportedMapSizes = [16,32,64,128,256,512];
+  function updateFromFields(){
+	var newVersion = parseInt(document.getElementById('version-field').value);
+	if(newVersion && (newVersion === 1 || newVersion ===2)){
+		map.version = newVersion;
+	}
+	
+	map.startLocation.forEach(function(loc,index){
+		var locX = parseInt(document.getElementById('startLocation-field-player-'+index+'-x').value);
+		var locY = parseInt(document.getElementById('startLocation-field-player-'+index+'-y').value);
+		if(locX && locX >= 0 && locX < map.width){
+			loc.x = locX;
+		}
+		if(locY && locY >= 0 && locY < map.height){
+			loc.y = locY;
+		}
+	});
+	
+	var newMaxPlayers = parseInt(document.getElementById('maxPlayers-field').value);
+	if(newMaxPlayers && (newMaxPlayers > 0 || newMaxPlayers <= 8)){
+		map.maxPlayers = newMaxPlayers;
+		var startLocation = [];
+		for( var i = 0; i < map.maxPlayers;i++){
+			startLocation[i] = {
+				x:(map.startLocation[i]&&map.startLocation[i].x)|| 0,
+				y:(map.startLocation[i]&&map.startLocation[i].y)|| 0
+			};
+		}
+		map.startLocation = startLocation;
+	}
+	var newWidth = parseInt(document.getElementById('width-field').value);
+	if(newWidth && (supportedMapSizes.indexOf(newWidth) > -1 )){
+		if((newWidth < map.width) && window.confirm("Do you really want to make the map smaller? Data might be lost!")){
+			for(var iDeleteWidth = newWidth; iDeleteWidth < map.width; iDeleteWidth++){
+				map.map.splice(iDeleteWidth, 1);
+			}
+			map.width = newWidth;
+		}else if(newWidth > map.width){
+			for(var iAddWidth = map.width; iAddWidth < newWidth; iAddWidth++){
+				map.map[iAddWidth] = [];
+				for(var iAddWidthHeight = 0; iAddWidthHeight < map.height; iAddWidthHeight++ ){
+					map.map[iAddWidth][iAddWidthHeight]={h:10,s:1,o:0};
+				}
+			}
+			map.width = newWidth;
+		}
+	}
+	var newHeight = parseInt(document.getElementById('height-field').value);
+	if(newHeight && (supportedMapSizes.indexOf(newHeight) > -1 )){
+		if((newHeight < map.height) && window.confirm("Do you really want to make the map smaller? Data might be lost!")){
+			for(var iDeleteHeight = newHeight; iDeleteHeight < map.height; iDeleteHeight++){
+				for(var iDeleteHeightWidth = 0; iDeleteHeightWidth < map.width; iDeleteHeightWidth++){
+					map.map[iDeleteHeightWidth].splice(iDeleteHeight, 1);
+				}
+			}
+			map.height = newHeight;
+		}else if(newHeight > map.height){
+			for(var iAddHeight = map.height; iAddHeight < newHeight; iAddHeight++){
+				for(var iAddHeightWidth = 0; iAddHeightWidth < map.width; iAddHeightWidth++ ){
+					map.map[iAddHeightWidth][iAddHeight]={h:10,s:1,o:0};
+				}
+			}
+			map.height = newHeight;
+		}
+	}
+	var newAltFactor = parseFloat(parseFloat(document.getElementById('altFactor-field').value.replace(',','.')).toFixed(2));
+	if(newAltFactor && (newAltFactor >= 1 && newAltFactor <= 100)){
+		if(newAltFactor+'' === newAltFactor.toFixed(0)){
+			map.altFactor = newAltFactor;
+		}else{
+			map.altFactor = newAltFactor*100;
+		}
+	}
+	
+	var newWaterLevel = parseInt(document.getElementById('waterLevel-field').value);
+	if( newWaterLevel >= 0 && newWaterLevel <= 20){
+		map.waterLevel = newWaterLevel;
+	}
+	map.title = (document.getElementById('title-field').value+'').substring(0,128);
+	map.autor = (document.getElementById('autor-field').value+'').substring(0,128);
+	if(map.version == 1){
+		map.description = (document.getElementById('description-field').value+'').substring(0,256);
+		map.magic = 0;
+		map.cliffLevel = 0;
+		map.cameraHeight = 0;
+		map.meta = "";
+	}else{
+		map.description = (document.getElementById('description-field').value+'').substring(0,128);
+		map.magic = parseInt("1020304", 16);
+		
+		var newCliffLevel = parseInt(document.getElementById('cliffLevel-field').value);
+		if(newCliffLevel >= 0 && newCliffLevel <= 20){
+			map.cliffLevel = newCliffLevel;
+		}
+		var newCameraHeight = parseInt(document.getElementById('cameraHeight-field').value);
+		if(newCameraHeight < 20){
+			map.cameraHeight = 0;
+		}else if(newCameraHeight >= 20 && newCameraHeight <= 40){
+			map.cameraHeight = newCameraHeight;
+			map.meta = "";
+		}
+		
+		
+	}
+	
+	
+	
+	
+	setTimeout(renderMapToCanvas,1);
   };
   
 	function writeMap(){
@@ -1059,4 +1226,5 @@ function randomIsland(){
 var dropZone = document;
   dropZone.addEventListener('dragover', handleDragOver, false);
   dropZone.addEventListener('drop', handleFileSelect, false);
+  init();
 </script>
