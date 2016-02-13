@@ -67,7 +67,7 @@ function init(){
 			};
 		}
 	}
-	setTimeout(renderMapToCanvas,1);
+	setTimeout(renderMapToCanvas,0);
   }
   
   
@@ -126,16 +126,40 @@ function getCanvasWithContext(id){
 }
 
 document.getElementById('btnSaveHeightmap').addEventListener("click", function( event ) {
+		if(locked){
+			return;
+		}
+		lock();
 		var renderer = getCanvasWithContext('highmap');	
 		if(!renderer){
 			return;
 		}
 		this.href = renderer.canvas.toDataURL();
 		this.download = map.title+'.hmap.png';
+		unlock();
 	}, false);
 document.getElementById('btnSaveMap').addEventListener("click", function( event ) {
-		this.href = "data:application/x-megaglest-map;base64," + window.btoa(writeMap());
-		this.download = map.title+'.mgm';
+		if(locked){
+			return;
+		}
+		lock();
+		event.preventDefault();
+		setTimeout(writeMap,100,function(mapFile){
+			process("Encoding File ...",1,0,2);
+			var mapUrl = window.btoa(mapFile);
+			var a = document.createElement("a");
+			a.href = "data:application/x-megaglest-map;base64," + mapUrl;
+			a.download = map.title+'.mgm';
+			a.click();
+			document.body.appendChild(a);
+			a.addEventListener("click", function(e) {
+			  a.parentNode.removeChild(a);
+			});
+			a.click();
+			console.log(a);
+			unlock();
+		});
+
 	}, false);
   
 function renderHeightMap(){
@@ -370,6 +394,8 @@ function renderStartPos(){
 		renderer.ctx.stroke();
 	});
 }
+
+var startPosTemplate = false;
   
 function renderMapToCanvas(){
 	if(!map.maxPlayers){
@@ -392,10 +418,10 @@ function renderMapToCanvas(){
 		document.getElementById('description-field').maxLength = 128;
 		document.getElementById('description-field').rows = 2;
 		
-		document.getElementById('magic-field').parentElement.style.display = 'block';
-		document.getElementById('cliffLevel-field').parentElement.style.display = 'block';
-		document.getElementById('cameraHeight-field').parentElement.style.display = 'block';
-		document.getElementById('meta-field').parentElement.style.display = 'block';
+		document.getElementById('magic-field').parentElement.parentElement.style.display = 'block';
+		document.getElementById('cliffLevel-field').parentElement.parentElement.style.display = 'block';
+		document.getElementById('cameraHeight-field').parentElement.parentElement.style.display = 'block';
+		document.getElementById('meta-field').parentElement.parentElement.style.display = 'block';
 		
 		document.getElementById('magic-field').innerHTML = '0x'+map.magic.toString(16);
 		document.getElementById('cliffLevel-field').value = map.cliffLevel;
@@ -409,23 +435,34 @@ function renderMapToCanvas(){
 		document.getElementById('description-field').maxLength = 256;
 		document.getElementById('description-field').rows = 4;
 		
-		document.getElementById('magic-field').parentElement.style.display = 'none';
-		document.getElementById('cliffLevel-field').parentElement.style.display = 'none';
-		document.getElementById('cameraHeight-field').parentElement.style.display = 'none';
-		document.getElementById('meta-field').parentElement.style.display = 'none';
+		document.getElementById('magic-field').parentElement.parentElement.style.display = 'none';
+		document.getElementById('cliffLevel-field').parentElement.parentElement.style.display = 'none';
+		document.getElementById('cameraHeight-field').parentElement.parentElement.style.display = 'none';
+		document.getElementById('meta-field').parentElement.parentElement.style.display = 'none';
 	}
 	//
+	if(!startPosTemplate){
+		startPosTemplate = document.getElementById('startLocation-field').innerHTML;
+	}
 	var startLocationsHTML =[];
 	map.startLocation.forEach(function(loc,index){
-		startLocationsHTML.push('<li style="margin-bottom:8px;"><span class="playerTag" style="color:'+playerColors[index]+';">Player '+(index+1)+'</span>:  X = <input id="startLocation-field-player-'+index+'-x" type="number" value="'+loc.x+'" onchange="updateFromFields()" min="0" max="'+(map.width-1)+'"> Y = <input id="startLocation-field-player-'+index+'-y" type="number" value="'+loc.y+'" onchange="updateFromFields()" min="0" max="'+(map.height-1)+'"></li>');
+		var line = startPosTemplate.replace(/\{\{color\}\}/gi,playerColors[index]);
+		line = line.replace(/\{\{number\}\}/gi,(index+1));
+		line = line.replace(/\-\-/gi,'-'+(index)+'-');
+		line = line.replace(/\{\{x\}\}/gi,loc.x);
+		line = line.replace(/\{\{y\}\}/gi,loc.y);
+		line = line.replace(/\{\{maxX\}\}/gi,(map.width-1));
+		line = line.replace(/\{\{maxY\}\}/gi,(map.height-1));
+		
+		startLocationsHTML.push(line);
 	});
 	document.getElementById('startLocation-field').innerHTML = startLocationsHTML.join('');
-	setTimeout(renderHeightMap,1);
-	setTimeout(renderSurfaces,1);
-	setTimeout(renderCliff,1);
-	setTimeout(renderObjects,1);
-	setTimeout(renderWater,1);
-	setTimeout(renderStartPos,1);	
+	setTimeout(renderHeightMap,0);
+	setTimeout(renderSurfaces,0);
+	setTimeout(renderCliff,0);
+	setTimeout(renderObjects,0);
+	setTimeout(renderWater,0);
+	setTimeout(renderStartPos,0);	
 }
   
   function handleFileSelect(evt) {
@@ -504,7 +541,7 @@ function renderMapToCanvas(){
 				map.map[(i % map.width)][(Math.floor(i / map.width))]['o'] = getInt8(handle);
 			}
 			
-			setTimeout(renderMapToCanvas,1);
+			setTimeout(renderMapToCanvas,0);
 			
 		});
 	}else if(f.name.indexOf('.png') === f.name.length - 4){
@@ -538,6 +575,10 @@ function renderMapToCanvas(){
   }
   
   function contrastHighmap(contrast){
+	  if(locked){
+		  return;
+	  }
+	lock();
 	var canvasHighmap = document.getElementById('highmap');
 	if (canvasHighmap.getContext) {
 		var ctx = canvasHighmap.getContext('2d');
@@ -554,6 +595,7 @@ function renderMapToCanvas(){
 		ctx.putImageData(imageData,0,0);
 		updateHeightMapFromCanvas();
 	}
+	unlock();
   }
   
   function updateHeightMapFromCanvas(){
@@ -565,8 +607,8 @@ function renderMapToCanvas(){
 					var cellID = i / 4;
 					map.map[(cellID % map.width)][(Math.floor(cellID / map.width))]['h'] = (imgData.data[i+0]+imgData.data[i+1]+imgData.data[i+2] )/ 3 * 20 / 255;
 				}
-				console.log(map);
-				setTimeout(renderMapToCanvas,1);
+				//console.log(map);
+				setTimeout(renderMapToCanvas,0);
 			}
   };
   
@@ -580,10 +622,10 @@ function renderMapToCanvas(){
 	map.startLocation.forEach(function(loc,index){
 		var locX = parseInt(document.getElementById('startLocation-field-player-'+index+'-x').value);
 		var locY = parseInt(document.getElementById('startLocation-field-player-'+index+'-y').value);
-		if(locX && locX >= 0 && locX < map.width){
+		if( locX >= 0 && locX < map.width){
 			loc.x = locX;
 		}
-		if(locY && locY >= 0 && locY < map.height){
+		if(locY >= 0 && locY < map.height){
 			loc.y = locY;
 		}
 	});
@@ -678,15 +720,23 @@ function renderMapToCanvas(){
 	
 	
 	
-	setTimeout(renderMapToCanvas,1);
+	setTimeout(renderMapToCanvas,0);
   };
-  
-	function writeMap(){
+ 
+	function writeMap(callback){
 		var handle = {data:"",pos:0};
+		var handle2 = {data:"",pos:0};
+		var rowHandles = [];
+		var rowHandles2 = [];
+		var rowHandles3 = [];
+		var handle3 = {data:"",pos:0};
+		var handle4 = {data:"",pos:0};
 		if(!map.maxPlayers){
 			return;
 		}
-		
+		var steps = 13+map.maxPlayers+3*(map.width*map.height);
+		var step = 0;
+
 		writeInt32(handle,map.version);
 		writeInt32(handle,map.maxPlayers);
 		writeInt32(handle,map.width);
@@ -704,6 +754,8 @@ function renderMapToCanvas(){
 			writeInt32(handle,map.cameraHeight);
 			writeString(handle,map.meta,116);
 		}
+		step = step + 13;
+		process("Creating File ...",step,steps,0);
 		for(var i = 0; i < map.maxPlayers;i++){
 			var loc = map.startLocation[i];
 			if(loc && loc.x > -1 && loc.y > -1){
@@ -714,36 +766,69 @@ function renderMapToCanvas(){
 				writeInt32(handle,0);
 			}
 		}
-		for(i = 0; i < ( map.width *  map.height);i++){
-			if(!map.map[(i % map.width)]){
-				map.map[(i % map.width)] = []; 
+		step = step + map.maxPlayers;
+		process("Creating File ...",step,steps,0);
+		handle.finished = true;
+		
+		var reduceRowHandle = function(previousValue, currentValue) {
+				previousValue.finished = previousValue.finished && currentValue.finished;
+				if(previousValue.finished){
+					previousValue.data = previousValue.data + currentValue.data;
+				}
+				return previousValue;
+			};
+		
+		var checkDone =function(){
+			var start = performance.now();
+			if(!handle.finished){
+				return;
 			}
-			if(!map.map[(i % map.width)][(Math.floor(i / map.width))]){
-				map.map[(i % map.width)][(Math.floor(i / map.width))] = {}; 
+			if(!handle2.finished){
+				handle2 = rowHandles.reduce(reduceRowHandle,{data:"",finished:true});
+				if(!handle2.finished){
+					return;
+				}
 			}
-			writeFloat(handle,map.map[(i % map.width)][(Math.floor(i / map.width))]['h']);
-		}
-		for(i = 0; i < ( map.width *  map.height);i++){
-			if(!map.map[(i % map.width)]){
-				map.map[(i % map.width)] = []; 
+			if(!handle3.finished){
+				handle3 = rowHandles2.reduce(reduceRowHandle,{data:"",finished:true});
+				if(!handle3.finished){
+					return;
+				}
 			}
-			if(!map.map[(i % map.width)][(Math.floor(i / map.width))]){
-				map.map[(i % map.width)][(Math.floor(i / map.width))] = {}; 
+			if(!handle4.finished){
+				handle4 = rowHandles3.reduce(reduceRowHandle,{data:"",finished:true});
+				if(!handle4.finished){
+					return;
+				}
 			}
-			writeInt8(handle,map.map[(i % map.width)][(Math.floor(i / map.width))]['s']);
-		}
-		for(i = 0; i < ( map.width *  map.height);i++){
-			if(!map.map[(i % map.width)]){
-				map.map[(i % map.width)] = []; 
+			callback(handle.data+handle2.data+handle3.data+handle4.data);
+		};
+		var rowWriter = function(d){
+			for(i = 0; i < map.height;i++){
+				if(!map.map[d.x][i]){
+					map.map[d.x][i] = {}; 
+				}
+				writeFloat(rowHandles[d.x],d.row[i]['h']);
+				writeInt8(rowHandles2[d.x],d.row[i]['s']);
+				writeInt8(rowHandles3[d.x],d.row[i]['o']);
+				process("Creating File ...",step,steps,0);
+				step = step +3;
 			}
-			if(!map.map[(i % map.width)][(Math.floor(i / map.width))]){
-				map.map[(i % map.width)][(Math.floor(i / map.width))] = {}; 
+			rowHandles[d.x].finished = true;
+			rowHandles2[d.x].finished = true;
+			rowHandles3[d.x].finished = true;
+			checkDone();
+		};
+		for(i = 0; i < map.width;i++){
+			if(!map.map[i]){
+				map.map[i] = []; 
 			}
-			writeInt8(handle,map.map[(i % map.width)][(Math.floor(i / map.width))]['o']);
+			rowHandles.push({data:"",pos:0});
+			rowHandles2.push({data:"",pos:0});
+			rowHandles3.push({data:"",pos:0});
+			setTimeout(rowWriter,i*map.height*0.125,{x:i,row:map.map[i]});
 		}
 		
-		
-		return handle.data;
 	};
 
 function closeCells(x,y,type){
@@ -760,7 +845,39 @@ function closeCells(x,y,type){
 	return cells;
 }	
 
+var locked = false;
+$('#processingDialog').modal({
+	'backdrop':'static',
+	'show':false
+});
+function lock(){
+	locked = true;
+	process("",0,100,0);
+	//setTimeout(function(){
+		$('#processingDialog').modal('show');
+	//},1);
+}
+function process(name,val,max,min){
+	//setTimeout(function(){
+		$('#processingDialogName').html(name);
+		var $process = $('#processingDialogProcess');
+		max = max || 100;
+		min = min || 0;
+		$process.attr("aria-valuenow",val);
+		$process.attr("aria-valuemin",min);
+		$process.attr("aria-valuemax",max);
+		$process.css("width",( ( (val-min) / (max-min) ) * 100 )+ '%');
+	//},1);
+}
+function unlock(){
+	setTimeout(function(){
+		$('#processingDialog').modal('hide');
+		locked = false;
+	},1);
+}
+
 var changes = 1;
+var randomGenStep = 0;
 //var rule = {'water':[5,6]};
 var rule = {'water':[5,6]};
 
@@ -768,8 +885,10 @@ function next(){
 	if(changes <= 0){
 		//fillOcean();
 		map.startLocation.forEach(ensureStatpointLand);
+		unlock();
 		return;
 	}
+	process("Random island",randomGenStep++,randomGenStep+((map.width+map.height)/32),0);
 	changes = 0;
 	for(var x=0;x<map.width;x++){
 		for(var y=0;y<map.height;y++){
@@ -791,8 +910,8 @@ function next(){
 		}
 	}
 	map.startLocation.forEach(ensureStatpointLand);
-	setTimeout(renderMapToCanvas,1);
-	setTimeout(next,1);
+	setTimeout(renderMapToCanvas,0);
+	setTimeout(next,0);
 }
 
 function ensureStatpointLand(loc,index){
@@ -817,12 +936,9 @@ function ensureStatpointLand(loc,index){
 	loc.x = loc.x + offsetX;
 	loc.y = loc.y + offsetY;
 	
-	console.log(loc.x,loc.y,map.map[loc.x][loc.y],offsetX,offsetY);
+	//console.log(loc.x,loc.y,map.map[loc.x][loc.y],offsetX,offsetY);
 	for(var i = loc.x - size; i <= loc.x + size; i++){
 		for(var j = loc.y - size; j <= loc.y + size; j++){
-			if(!map.map[i] || !map.map[i][j]){
-				console.log('loc',loc.x,loc.y,'offset',offsetX,offsetY,'i',i,'j',j,map.map[i]);
-			}
 			map.map[i][j].type = 'land';
 			map.map[i][j].h = 10;
 			if(map.cliffLevel > 0){
@@ -867,9 +983,12 @@ function ensureStatpointLand(loc,index){
 }
 
 function randomIsland(){
-	if(map.width <= 0 || map.height <= 0||map.maxPlayer < 1||!map.startLocation){
+	if(locked || map.width <= 0 || map.height <= 0||map.maxPlayer < 1||!map.startLocation){
 		return;
 	}
+	lock();
+	randomGenStep = 0;
+	process("Random island",randomGenStep++,randomGenStep+((map.width+map.height)/32),0);
 	map.map = [];
 	map.title = 'generaded_'+Math.random();
 	map.author = 'http://muwns.eu/mgm/';
@@ -895,8 +1014,8 @@ function randomIsland(){
 	changes = 1;
 	
 	
-	setTimeout(renderMapToCanvas,1);
-	setTimeout(next,1);
+	setTimeout(renderMapToCanvas,0);
+	setTimeout(next,0);
 	
 }
 

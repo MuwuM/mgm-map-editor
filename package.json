@@ -18,7 +18,14 @@
   "homepage": "https://github.com/MuwuM/mgm-map-editor#readme",
   "devDependencies": {
     "grunt": "^0.4.5",
-    "grunt-html-build": "^0.5.3",
-    "grunt-inline": "^0.3.6"
+    "grunt-contrib-clean": "^0.7.0",
+    "grunt-css-url-embed": "^1.6.1",
+    "grunt-embed-fonts": "^0.1.2",
+    "grunt-inline": "^0.3.6",
+    "grunt-string-replace": "^1.2.1"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.0"
   }
 }

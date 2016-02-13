@@ -1,162 +1,268 @@
 <!Doctype html>
 <html>
 <head>
-<link href="index.css" rel="stylesheet" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="index.css" rel="stylesheet" />
+	<link href="build/css/bootstrap.css" rel="stylesheet" />
 </head>
 <body>
-<div id="drop_zone">Drop map or png file here <input type="file" id="files" name="file"/></div>
-<div id="previewArea">
+<div class="container-fluid">
+<div id="drop_zone" class="jumbotron"><h2><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Drop map or png file here</h2><input type="file" id="files" name="file"/></div>
+<div class="row">
+<div id="previewArea" class="col-lg-6 col-md-12">
 	<canvas id="highmap"></canvas>
 	<canvas id="texture"></canvas>
 	<canvas id="water"></canvas>
 	<canvas id="cliff"></canvas>
 	<canvas id="objects"></canvas>
 	<canvas id="startpos"></canvas>
-	<div id="control">
-		<button class="hideHeightMap" onclick="togglePreviewArea('hideHeightMap')">Heights</button>
-		<button class="hideTexture" onclick="togglePreviewArea('hideTexture')">Surfaces</button>
-		<button class="hideWater" onclick="togglePreviewArea('hideWater')">Water</button>
-		<button class="hideCliff" onclick="togglePreviewArea('hideCliff')">Cliffs</button>
-		<button class="hideObjects" onclick="togglePreviewArea('hideObjects')">Objects</button>
-		<button class="hideStartPos" onclick="togglePreviewArea('hideStartPos')">Start positions</button>
+	<div id="control" class="btn-group" role="group">
+		<button class="hideHeightMap btn btn-default" onclick="togglePreviewArea('hideHeightMap')"><span class="glyphicon glyphicon-eye-close"></span><span class="glyphicon glyphicon-eye-open"></span> Heights</button>
+		<button class="hideTexture btn btn-default" onclick="togglePreviewArea('hideTexture')"><span class="glyphicon glyphicon-eye-close"></span><span class="glyphicon glyphicon-eye-open"></span> Surfaces</button>
+		<button class="hideWater btn btn-default" onclick="togglePreviewArea('hideWater')"><span class="glyphicon glyphicon-eye-close"></span><span class="glyphicon glyphicon-eye-open"></span> Water</button>
+		<button class="hideCliff btn btn-default" onclick="togglePreviewArea('hideCliff')"><span class="glyphicon glyphicon-eye-close"></span><span class="glyphicon glyphicon-eye-open"></span> Cliffs</button>
+		<button class="hideObjects btn btn-default" onclick="togglePreviewArea('hideObjects')"><span class="glyphicon glyphicon-eye-close"></span><span class="glyphicon glyphicon-eye-open"></span> Objects</button>
+		<button class="hideStartPos btn btn-default" onclick="togglePreviewArea('hideStartPos')"><span class="glyphicon glyphicon-eye-close"></span><span class="glyphicon glyphicon-eye-open"></span> Start positions</button>
+	</div>
+	<div class="well">
+		<button class="btn btn-primary" onclick="contrastHighmap(10)">increase contrast</button>
+		<button class="btn btn-primary" onclick="contrastHighmap(-10)">reduce contrast</button>
+		<button class="btn btn-primary" onclick="randomIsland()">Random island</button>
 	</div>
 </div>
-<div id="metadataArea">
-	<p>
-		<label for="#version-field">version</label>
-		<select name="version-field" id="version-field" onchange="updateFromFields()">
-			<option value="1">1 [Glest format]</option>
-			<option value="2">2 [Megaglest format]</option>
-		</select>
-	</p>
-	<p>
-		<label for="#maxPlayers-field">maxPlayers</label>
-		<select name="maxPlayers-field" id="maxPlayers-field" onchange="updateFromFields()">
-			<option value="1">1</option>
-			<option value="2">2</option>
-			<option value="3">3</option>
-			<option value="4">4</option>
-			<option value="5">5</option>
-			<option value="6">6</option>
-			<option value="7">7</option>
-			<option value="8">8</option>
-		</select>
-	</p>
-	<p>
-		<label for="#width-field">width</label>
-		<select name="width-field" id="width-field" onchange="updateFromFields()">
-			<option value="16">16</option>
-			<option value="32">32</option>
-			<option value="64">64</option>
-			<option value="128">128</option>
-			<option value="256">256</option>
-			<option value="512">512</option>
-		</select>
-	</p>
-	<p>
-		<label for="#height-field">height</label>
-		<select name="height-field" id="height-field" onchange="updateFromFields()">
-			<option value="16">16</option>
-			<option value="32">32</option>
-			<option value="64">64</option>
-			<option value="128">128</option>
-			<option value="256">256</option>
-			<option value="512">512</option>
-		</select>
-	</p>
-	<p><label for="#altFactor-field">altFactor</label><input id="altFactor-field" type="text" onchange="updateFromFields()"> (1.00 - 99.99 lower means more hill effect)</p>
-	<p><label for="#waterLevel-field">waterLevel</label>
-		<select name="waterLevel-field" id="waterLevel-field" onchange="updateFromFields()">
-			<option value="0">0</option>
-			<option value="1">1</option>
-			<option value="2">2</option>
-			<option value="3">3</option>
-			<option value="4">4</option>
-			<option value="5">5</option>
-			<option value="6">6</option>
-			<option value="7">7</option>
-			<option value="8">8</option>
-			<option value="9">9</option>
-			<option value="10">10</option>
-			<option value="11">11</option>
-			<option value="12">12</option>
-			<option value="13">13</option>
-			<option value="14">14</option>
-			<option value="15">15</option>
-			<option value="16">16</option>
-			<option value="17">17</option>
-			<option value="18">18</option>
-			<option value="19">19</option>
-			<option value="20">20</option>
-		</select>
-	</p>
-	<p><label for="#title-field">title</label><input id="title-field" type="text" maxlength="128" onchange="updateFromFields()"></p>
-	<p><label for="#autor-field">autor</label><input id="autor-field" type="text" maxlength="128" onchange="updateFromFields()"></p>
-	<p><label for="#description-field">description</label><textarea name="description-field" id="description-field" cols="64" rows="4"  maxlength="128" onchange="updateFromFields()"></textarea></p>
-	<p><label for="#magic-field">magic</label><span id="magic-field"></span></p>
-	
-	<p><label for="#cliffLevel-field">cliffLevel</label>
-		<select name="cliffLevel-field" id="cliffLevel-field" onchange="updateFromFields()">
-			<option value="0">0</option>
-			<option value="1">1</option>
-			<option value="2">2</option>
-			<option value="3">3</option>
-			<option value="4">4</option>
-			<option value="5">5</option>
-			<option value="6">6</option>
-			<option value="7">7</option>
-			<option value="8">8</option>
-			<option value="9">9</option>
-			<option value="10">10</option>
-			<option value="11">11</option>
-			<option value="12">12</option>
-			<option value="13">13</option>
-			<option value="14">14</option>
-			<option value="15">15</option>
-			<option value="16">16</option>
-			<option value="17">17</option>
-			<option value="18">18</option>
-			<option value="19">19</option>
-			<option value="20">20</option>
-		</select>
-	</p>
-	<p><label for="#cameraHeight-field">cameraHeight</label>
-		<select name="cameraHeight-field" id="cameraHeight-field" onchange="updateFromFields()">
-			<option value="0">auto</option>
-			<option value="20">20</option>
-			<option value="21">21</option>
-			<option value="21">21</option>
-			<option value="22">22</option>
-			<option value="23">23</option>
-			<option value="24">24</option>
-			<option value="25">25</option>
-			<option value="26">26</option>
-			<option value="27">27</option>
-			<option value="28">28</option>
-			<option value="29">29</option>
-			<option value="30">30</option>
-			<option value="31">31</option>
-			<option value="32">32</option>
-			<option value="33">33</option>
-			<option value="34">34</option>
-			<option value="35">35</option>
-			<option value="36">36</option>
-			<option value="37">37</option>
-			<option value="38">38</option>
-			<option value="39">39</option>
-			<option value="40">40</option>
-		</select>
-	</p>
-	<p><label for="#meta-field">meta</label><span id="meta-field"></span></p>
-	<p>
-		<label for="#startLocation-field">startLocation</label>
-		<ul id="startLocation-field">
-			<li><span>Player 0</span><input id="startLocation-field-player-0-x" type="text" onchange="updateFromFields()">x<input id="startLocation-field-player-0-y" type="text" onchange="updateFromFields()"></li>
-		</ul>
-	</p>
-	<p><a id="btnSaveHeightmap">Save Heightmap</a> <a id="btnSaveMap">Save Map</a> <button onclick="contrastHighmap(10)">increase contrast</button> <button onclick="contrastHighmap(-10)">reduce contrast</button> </p>
-	<p><button onclick="randomIsland()">Random island</button> ( requires a map for StartLocation )</p>
+<div id="metadataArea" class="col-lg-6 col-md-12">
+	<div class="form-horizontal">
+	<div class="form-group">
+		<div class="col-sm-10 col-sm-offset-2">
+			<a class="btn btn-default btn-lg" id="btnSaveHeightmap"><span class="glyphicon glyphicon-floppy-save"></span> Heightmap</a>
+			<a class="btn btn-default btn-lg" id="btnSaveMap"><span class="glyphicon glyphicon-floppy-save"></span> Map</a>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#version-field">version</label>
+		<div class="col-sm-10">
+			<select name="version-field" class="form-control" id="version-field" onchange="updateFromFields()">
+				<option value="1">1 [Glest format]</option>
+				<option value="2">2 [Megaglest format]</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#maxPlayers-field">maxPlayers</label>
+		<div class="col-sm-10">
+			<select name="maxPlayers-field" class="form-control" id="maxPlayers-field" onchange="updateFromFields()">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#width-field">width</label>
+		<div class="col-sm-10">
+			<select name="width-field" class="form-control" id="width-field" onchange="updateFromFields()">
+				<option value="16">16</option>
+				<option value="32">32</option>
+				<option value="64">64</option>
+				<option value="128">128</option>
+				<option value="256">256</option>
+				<option value="512">512</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#height-field">height</label>
+		<div class="col-sm-10">
+			<select name="height-field" class="form-control" id="height-field" onchange="updateFromFields()">
+				<option value="16">16</option>
+				<option value="32">32</option>
+				<option value="64">64</option>
+				<option value="128">128</option>
+				<option value="256">256</option>
+				<option value="512">512</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#altFactor-field">altFactor</label>
+		<div class="col-sm-10">
+			<input id="altFactor-field" class="form-control" type="text" onchange="updateFromFields()">
+			<span class="help-block">(1.00 - 99.99 lower means more hill effect)</span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#waterLevel-field">waterLevel</label>
+		<div class="col-sm-10">
+			<select name="waterLevel-field" class="form-control" id="waterLevel-field" onchange="updateFromFields()">
+				<option value="0">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#title-field">title</label>
+		<div class="col-sm-10">
+			<input id="title-field" class="form-control" type="text" maxlength="128" onchange="updateFromFields()">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#autor-field">autor</label>
+		<div class="col-sm-10">
+			<input id="autor-field" class="form-control" type="text" maxlength="128" onchange="updateFromFields()">
+		</div>	
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#description-field">description</label>
+		<div class="col-sm-10">
+			<textarea name="description-field" class="form-control" id="description-field" cols="64" rows="4"  maxlength="128" onchange="updateFromFields()"></textarea>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#magic-field">magic</label>
+		<div class="col-sm-10">
+			<span id="magic-field" class="form-control"></span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#cliffLevel-field">cliffLevel</label>
+		<div class="col-sm-10">
+			<select name="cliffLevel-field" class="form-control" id="cliffLevel-field" onchange="updateFromFields()">
+				<option value="0">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#cameraHeight-field">cameraHeight</label>
+		<div class="col-sm-10">
+			<select name="cameraHeight-field" class="form-control" id="cameraHeight-field" onchange="updateFromFields()">
+				<option value="0">auto</option>
+				<option value="20">20</option>
+				<option value="21">21</option>
+				<option value="21">21</option>
+				<option value="22">22</option>
+				<option value="23">23</option>
+				<option value="24">24</option>
+				<option value="25">25</option>
+				<option value="26">26</option>
+				<option value="27">27</option>
+				<option value="28">28</option>
+				<option value="29">29</option>
+				<option value="30">30</option>
+				<option value="31">31</option>
+				<option value="32">32</option>
+				<option value="33">33</option>
+				<option value="34">34</option>
+				<option value="35">35</option>
+				<option value="36">36</option>
+				<option value="37">37</option>
+				<option value="38">38</option>
+				<option value="39">39</option>
+				<option value="40">40</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#meta-field">meta</label>
+		<div class="col-sm-10">
+			<span id="meta-field" class="form-control"></span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="#startLocation-field">startLocation</label>
+		<div class="col-sm-10">
+			<ul class="list-group" id="startLocation-field">
+				<li class="row list-group-item playerTag">
+					<div class="col-xs-1" data-color="{{color}}"><span class="form-control" style="background:{{color}};color:#ffffff;"></span></div>
+					<div class="col-xs-3"><label class="control-label" for="#startLocation-field-player--x">Player {{number}}</label></div>
+					<div class="col-xs-4">
+						<div class="input-group">
+							<span class="input-group-addon">X</span>
+							<input id="startLocation-field-player--x" class="form-control" type="number" value="{{x}}" onchange="updateFromFields()" min="0" max="{{maxX}}">
+						</div>
+					</div>
+					<div class="col-xs-4">
+						<div class="input-group">
+							<span class="input-group-addon">Y</span>
+							<input id="startLocation-field-player--y" class="form-control" type="number" value="{{y}}" onchange="updateFromFields()" min="0" max="{{maxY}}">
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
 </div>
+</div>
+</div>
+</div>
+
+<div id="processingDialog" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+        <h4 class="modal-title">Processing Map Data</h4>
+      </div>
+      <div class="modal-body">
+        <p id="processingDialogName"></p>
+		<div class="progress">
+		  <div id="processingDialogProcess" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+		  </div>
+		</div>
+      </div>
+     <!--<div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>-->
+    </div>
+  </div>
+</div>
+
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
 <script src="simplepack.js"></script>
 <script src="simpleunpack.js"></script>
 <script src="readWriteModules.js"></script>

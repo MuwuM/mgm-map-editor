@@ -1,37 +1,14 @@
-#byte_content {
-	margin: 5px 0;
-	max-height: 100px;
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-#byte_range { margin-top: 5px; }
 #drop_zone {
 	border: 2px dashed #bbb;
 	border-radius: 5px;
 	padding: 25px;
 	text-align: center;
-	font: 20pt bold 'Vollkorn';
 	color: #bbb;
 }
 #drop_zone>#files{
 	display:none;
 }
-p>label{
-	display:inline-block;
-	font-weight:bold;
-	width: 30%;
-}
-p>label:after{
-	content:': ';
-}
-#metadataArea{
-	width:40%;
-	padding:0;
-	margin:0;
-	border:none;
-	display:inline-block;
-}
-#previewArea{
+#previewArea:before{
 	width:512px;
 	height:512px;
 	padding:0;
@@ -39,6 +16,7 @@ p>label:after{
 	border:none;
 	display:inline-block;
 	position:relative;
+	content:'';
 }
 #previewArea>canvas{
 	max-width:512px;
@@ -68,23 +46,33 @@ p>label:after{
 
 
 #previewArea>#control{
-	position:absolute;
+	/*position:absolute;
 	bottom: -20px;
-	height:20px;
+	height:20px;*/
 }
-#previewArea>#control>button:before{
-	content:'Hide ';
+#previewArea>#control>button .glyphicon.glyphicon-eye-open{
+	display: inline-block;
 }
-#previewArea.hideHeightMap>#control>button.hideHeightMap:before,
-#previewArea.hideTexture>#control>button.hideTexture:before,
-#previewArea.hideWater>#control>button.hideWater:before,
-#previewArea.hideCliff>#control>button.hideCliff:before,
-#previewArea.hideObjects>#control>button.hideObjects:before,
-#previewArea.hideStartPos>#control>button.hideStartPos:before
-{
-	content:'Show ';
+#previewArea>#control>button .glyphicon.glyphicon-eye-close{
+	display: none;
+}
+
+#previewArea.hideHeightMap>#control>button.hideHeightMap .glyphicon.glyphicon-eye-close,
+#previewArea.hideTexture>#control>button.hideTexture .glyphicon.glyphicon-eye-close,
+#previewArea.hideWater>#control>button.hideWater .glyphicon.glyphicon-eye-close,
+#previewArea.hideCliff>#control>button.hideCliff .glyphicon.glyphicon-eye-close,
+#previewArea.hideObjects>#control>button.hideObjects .glyphicon.glyphicon-eye-close,
+#previewArea.hideStartPos>#control>button.hideStartPos .glyphicon.glyphicon-eye-close{
+	display: inline-block;
+}
+#previewArea.hideHeightMap>#control>button.hideHeightMap .glyphicon.glyphicon-eye-open,
+#previewArea.hideTexture>#control>button.hideTexture .glyphicon.glyphicon-eye-open,
+#previewArea.hideWater>#control>button.hideWater .glyphicon.glyphicon-eye-open,
+#previewArea.hideCliff>#control>button.hideCliff .glyphicon.glyphicon-eye-open,
+#previewArea.hideObjects>#control>button.hideObjects .glyphicon.glyphicon-eye-open,
+#previewArea.hideStartPos>#control>button.hideStartPos .glyphicon.glyphicon-eye-open{
+	display: none;
 }
 #startLocation-field .playerTag{
 	background:#cdcdcd;
-	padding:5px;
 }
