@@ -1,0 +1,24 @@
+{
+  "name": "mgm-map-editor",
+  "version": "0.0.1",
+  "description": "Map Editor for Glest and Megaglest Maps",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuwuM/mgm-map-editor.git"
+  },
+  "author": "MuwuM",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MuwuM/mgm-map-editor/issues"
+  },
+  "homepage": "https://github.com/MuwuM/mgm-map-editor#readme",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-html-build": "^0.5.3",
+    "grunt-inline": "^0.3.6"
+  }
+}

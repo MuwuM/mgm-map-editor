@@ -1,0 +1,175 @@
+<!Doctype html>
+<html>
+<head>
+<style>
+#byte_content{margin:5px 0;max-height:100px;overflow-y:auto;overflow-x:hidden}#byte_range{margin-top:5px}#drop_zone{border:2px dashed #bbb;border-radius:5px;padding:25px;text-align:center;font:20pt bold Vollkorn;color:#bbb}#drop_zone>#files{display:none}p>label{display:inline-block;font-weight:700;width:30%}p>label:after{content:': '}#metadataArea{width:40%;padding:0;margin:0;border:0;display:inline-block}#previewArea{width:512px;height:512px;padding:0;margin:0;border:0;display:inline-block;position:relative}#previewArea>canvas{max-width:512px;max-height:512px;position:absolute;top:0;left:0}#previewArea.hideHeightMap>#highmap{display:none}#previewArea.hideTexture>#texture{display:none}#previewArea.hideWater>#water{display:none}#previewArea.hideCliff>#cliff{display:none}#previewArea.hideObjects>#objects{display:none}#previewArea.hideStartPos>#startpos{display:none}#previewArea>#control{position:absolute;bottom:-20px;height:20px}#previewArea>#control>button:before{content:'Hide '}#previewArea.hideHeightMap>#control>button.hideHeightMap:before,#previewArea.hideTexture>#control>button.hideTexture:before,#previewArea.hideWater>#control>button.hideWater:before,#previewArea.hideCliff>#control>button.hideCliff:before,#previewArea.hideObjects>#control>button.hideObjects:before,#previewArea.hideStartPos>#control>button.hideStartPos:before{content:'Show '}#startLocation-field .playerTag{background:#cdcdcd;padding:5px}
+</style>
+</head>
+<body>
+<div id="drop_zone">Drop map or png file here <input type="file" id="files" name="file"/></div>
+<div id="previewArea">
+	<canvas id="highmap"></canvas>
+	<canvas id="texture"></canvas>
+	<canvas id="water"></canvas>
+	<canvas id="cliff"></canvas>
+	<canvas id="objects"></canvas>
+	<canvas id="startpos"></canvas>
+	<div id="control">
+		<button class="hideHeightMap" onclick="togglePreviewArea('hideHeightMap')">Heights</button>
+		<button class="hideTexture" onclick="togglePreviewArea('hideTexture')">Surfaces</button>
+		<button class="hideWater" onclick="togglePreviewArea('hideWater')">Water</button>
+		<button class="hideCliff" onclick="togglePreviewArea('hideCliff')">Cliffs</button>
+		<button class="hideObjects" onclick="togglePreviewArea('hideObjects')">Objects</button>
+		<button class="hideStartPos" onclick="togglePreviewArea('hideStartPos')">Start positions</button>
+	</div>
+</div>
+<div id="metadataArea">
+	<p>
+		<label for="#version-field">version</label>
+		<select name="version-field" id="version-field" onchange="updateFromFields()">
+			<option value="1">1 [Glest format]</option>
+			<option value="2">2 [Megaglest format]</option>
+		</select>
+	</p>
+	<p>
+		<label for="#maxPlayers-field">maxPlayers</label>
+		<select name="maxPlayers-field" id="maxPlayers-field" onchange="updateFromFields()">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+		</select>
+	</p>
+	<p>
+		<label for="#width-field">width</label>
+		<select name="width-field" id="width-field" onchange="updateFromFields()">
+			<option value="16">16</option>
+			<option value="32">32</option>
+			<option value="64">64</option>
+			<option value="128">128</option>
+			<option value="256">256</option>
+			<option value="512">512</option>
+		</select>
+	</p>
+	<p>
+		<label for="#height-field">height</label>
+		<select name="height-field" id="height-field" onchange="updateFromFields()">
+			<option value="16">16</option>
+			<option value="32">32</option>
+			<option value="64">64</option>
+			<option value="128">128</option>
+			<option value="256">256</option>
+			<option value="512">512</option>
+		</select>
+	</p>
+	<p><label for="#altFactor-field">altFactor</label><input id="altFactor-field" type="text" onchange="updateFromFields()"> (1.00 - 99.99 lower means more hill effect)</p>
+	<p><label for="#waterLevel-field">waterLevel</label>
+		<select name="waterLevel-field" id="waterLevel-field" onchange="updateFromFields()">
+			<option value="0">0</option>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+			<option value="11">11</option>
+			<option value="12">12</option>
+			<option value="13">13</option>
+			<option value="14">14</option>
+			<option value="15">15</option>
+			<option value="16">16</option>
+			<option value="17">17</option>
+			<option value="18">18</option>
+			<option value="19">19</option>
+			<option value="20">20</option>
+		</select>
+	</p>
+	<p><label for="#title-field">title</label><input id="title-field" type="text" maxlength="128" onchange="updateFromFields()"></p>
+	<p><label for="#autor-field">autor</label><input id="autor-field" type="text" maxlength="128" onchange="updateFromFields()"></p>
+	<p><label for="#description-field">description</label><textarea name="description-field" id="description-field" cols="64" rows="4"  maxlength="128" onchange="updateFromFields()"></textarea></p>
+	<p><label for="#magic-field">magic</label><span id="magic-field"></span></p>
+	
+	<p><label for="#cliffLevel-field">cliffLevel</label>
+		<select name="cliffLevel-field" id="cliffLevel-field" onchange="updateFromFields()">
+			<option value="0">0</option>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+			<option value="11">11</option>
+			<option value="12">12</option>
+			<option value="13">13</option>
+			<option value="14">14</option>
+			<option value="15">15</option>
+			<option value="16">16</option>
+			<option value="17">17</option>
+			<option value="18">18</option>
+			<option value="19">19</option>
+			<option value="20">20</option>
+		</select>
+	</p>
+	<p><label for="#cameraHeight-field">cameraHeight</label>
+		<select name="cameraHeight-field" id="cameraHeight-field" onchange="updateFromFields()">
+			<option value="0">auto</option>
+			<option value="20">20</option>
+			<option value="21">21</option>
+			<option value="21">21</option>
+			<option value="22">22</option>
+			<option value="23">23</option>
+			<option value="24">24</option>
+			<option value="25">25</option>
+			<option value="26">26</option>
+			<option value="27">27</option>
+			<option value="28">28</option>
+			<option value="29">29</option>
+			<option value="30">30</option>
+			<option value="31">31</option>
+			<option value="32">32</option>
+			<option value="33">33</option>
+			<option value="34">34</option>
+			<option value="35">35</option>
+			<option value="36">36</option>
+			<option value="37">37</option>
+			<option value="38">38</option>
+			<option value="39">39</option>
+			<option value="40">40</option>
+		</select>
+	</p>
+	<p><label for="#meta-field">meta</label><span id="meta-field"></span></p>
+	<p>
+		<label for="#startLocation-field">startLocation</label>
+		<ul id="startLocation-field">
+			<li><span>Player 0</span><input id="startLocation-field-player-0-x" type="text" onchange="updateFromFields()">x<input id="startLocation-field-player-0-y" type="text" onchange="updateFromFields()"></li>
+		</ul>
+	</p>
+	<p><a id="btnSaveHeightmap">Save Heightmap</a> <a id="btnSaveMap">Save Map</a> <button onclick="contrastHighmap(10)">increase contrast</button> <button onclick="contrastHighmap(-10)">reduce contrast</button> </p>
+	<p><button onclick="randomIsland()">Random island</button> ( requires a map for StartLocation )</p>
+</div>
+<script>
+function pack(r){for(var e,n,t,a,o,g,f,h,s,i,m,u,l,c,w,d,p,C,k,S,y,b=0,E=1,W="",A="",M=0,T=[];b<r.length;){for(e=r.charAt(b),n="",b++;b<r.length&&null!==r.charAt(b).match(/[\d\*]/);)n+=r.charAt(b),b++;switch(""===n&&(n="1"),e){case"a":if("undefined"==typeof arguments[E])throw new Error("Warning:  pack() Type "+e+": not enough arguments");for(A=String(arguments[E]),"*"===n&&(n=A.length),M=0;n>M;M++)W+="undefined"==typeof A[M]?String.fromCharCode(0):A[M];E++;break;case"c":if("*"===n&&(n=arguments.length-E),n>arguments.length-E)throw new Error("Warning:  pack() Type "+e+": too few arguments");for(M=0;n>M;M++)W+=String.fromCharCode(arguments[E]),E++;break;case"l":if("*"===n&&(n=arguments.length-E),n>arguments.length-E)throw new Error("Warning:  pack() Type "+e+": too few arguments");for(M=0;n>M;M++)W+=String.fromCharCode(255&arguments[E]),W+=String.fromCharCode(255&arguments[E]>>8),W+=String.fromCharCode(255&arguments[E]>>16),W+=String.fromCharCode(255&arguments[E]>>24),E++;break;case"f":if(t=23,a=8,"*"===n&&(n=arguments.length-E),n>arguments.length-E)throw new Error("Warning:  pack() Type "+e+": too few arguments");for(M=0;n>M;M++){for(A=arguments[E],o=Math.pow(2,a-1)-1,g=-o+1,f=o,h=g-t,s=isNaN(c=parseFloat(A))||c===-1/0||c===+1/0?c:0,i=0,m=2*o+1+t+3,u=new Array(m),l=(c=0!==s?0:c)<0,c=Math.abs(c),w=Math.floor(c),d=c-w,S=m;S;)u[--S]=0;for(S=o+2;w&&S;)u[--S]=w%2,w=Math.floor(w/2);for(S=o+1;d>0&&S;--d)u[++S]=((d*=2)>=1)-0;for(S=-1;++S<m&&!u[S];);if(u[(p=t-1+(S=(i=o+1-S)>=g&&f>=i?S+1:o+1-(i=g-1)))+1]){if(!(C=u[p]))for(k=p+2;!C&&m>k;C=u[k++]);for(k=p+1;C&&--k>=0;(u[k]=!u[k]-0)&&(C=0));}for(S=0>S-2?-1:S-3;++S<m&&!u[S];);for((i=o+1-S)>=g&&f>=i?++S:g>i&&(S=o+1-(i=g-1)),(w||0!==s)&&(i=f+1,S=o+2,s===-1/0?l=1:isNaN(s)&&(u[S]=1)),c=Math.abs(i+o),y="",k=a+1;--k;)y=c%2+y,c=c>>=1;for(c=0,k=0,S=(y=(l?"1":"0")+y+u.slice(S,S+t).join("")).length,T=[];S;)c+=(1<<k)*y.charAt(--S),7===k&&(T[T.length]=String.fromCharCode(c),c=0),k=(k+1)%8;T[T.length]=c?String.fromCharCode(c):"",W+=T.join(""),E++}break;default:throw new Error("Warning:  pack() Type "+e+": unknown format code")}}if(E<arguments.length)throw new Error("Warning: pack(): "+(arguments.length-E)+" arguments unused");return W}
+</script>
+<script>
+function unpack(r,t){for(var e=0,n=0,a={},s="",u="",c="",h="",o=0,l=0,p=0,g=0,b=0,f=function(r,t,e){for(var n=[],a=r.length;a;a-=1)for(var s=r[a-1],u=8;u;u-=1)n.push(s%2?1:0),s>>=1;n.reverse();var c=n.join(""),h=(1<<t-1)-1,o=parseInt(c.substring(0,1),2)?-1:1,l=parseInt(c.substring(1,1+t),2),p=parseInt(c.substring(1+t),2);return l===(1<<t)-1?0!==p?0/0:1/0*o:l>0?o*Math.pow(2,l-h)*(1+p/Math.pow(2,e)):0!==p?o*Math.pow(2,-(h-1))*(p/Math.pow(2,e)):0*o};e<r.length;){for(s=r.charAt(e),u="",e++;e<r.length&&null!==r.charAt(e).match(/[\d\*]/);)u+=r.charAt(e),e++;for(""===u&&(u="1"),c="";e<r.length&&"/"!==r.charAt(e);)c+=r.charAt(e),e++;switch("/"===r.charAt(e)&&e++,s){case"a":u="*"===u?t.length-n:parseInt(u,10),h=t.substr(n,u),n+=u,currentResult=h.replace(/\0+$/,""),a[c]=currentResult;break;case"c":for(u="*"===u?t.length-n:parseInt(u,10),h=t.substr(n,u),n+=u,o=0;o<h.length;o++)currentResult=h.charCodeAt(o),currentResult>=128&&(currentResult-=256),a[c+(u>1?o+1:"")]=currentResult;break;case"l":for(u="*"===u?(t.length-n)/4:parseInt(u,10),h=t.substr(n,4*u),n+=4*u,o=0;o<h.length;o+=4)currentResult=((255&h.charCodeAt(o+3))<<24)+((255&h.charCodeAt(o+2))<<16)+((255&h.charCodeAt(o+1))<<8)+(255&h.charCodeAt(o)),a[c+(u>1?o/4+1:"")]=currentResult;break;case"f":for(g=8,p=23,b=4,u="*"===u?(t.length-n)/b:parseInt(u,10),h=t.substr(n,u*b),n+=u*b,o=0;o<h.length;o+=b){for(t=h.substr(o,b),bytes=[],l=t.length-1;l>=0;--l)bytes.push(t.charCodeAt(l));a[c+(u>1?o/4+1:"")]=f(bytes,g,p)}break;default:throw new Error("Warning:  unpack() Type "+s+": unknown format code")}}return a}
+</script>
+<script>
+function fread(r,t){var n=r.data.slice(r.pos,r.pos+t);return r.pos=r.pos+t,n}function fwrite(r,t,n){return r.data=r.data+t.slice(0,n),r.pos=r.pos+n,r.pos}function getInt32(r){var t=fread(r,4),n=pack("a4",t),a=unpack("l",n);return a[1]||a[""]}function getInt8(r){var t=fread(r,1),n=pack("a",t),a=unpack("c",n);return a[1]||a[""]}function getString(r,t){var n=fread(r,t),a=pack("a"+t,n),e=unpack("a"+t,a);return e[1]||e[""]}function getFloat(r){var t=fread(r,4),n=pack("a4",t),a=unpack("f",n);return a[1]||a[""]}function writeInt32(r,t){var n=pack("l",t);return fwrite(r,n,4)}function writeInt8(r,t){var n=pack("c",t);return fwrite(r,n,1)}function writeFloat(r,t){return buf=pack("f",t),fwrite(r,buf,4)}function writeString(r,t,n){var a=pack("a"+n,t);return fwrite(r,a,n)}
+</script>
+<script>
+function togglePreviewArea(a){document.getElementById("previewArea").classList.toggle(a)}function readBlob(a,e){var t=new FileReader;t.onloadend=function(a){a.target.readyState==FileReader.DONE&&e(a.target.result)},t.readAsBinaryString(a)}function componentToHex(a){var e=a.toString(16);return 1==e.length?"0"+e:e}function rgbToHex(a,e,t){return"#"+componentToHex(a)+componentToHex(e)+componentToHex(t)}function init(){map={version:2,maxPlayers:8,width:64,height:64,altFactor:1,waterLevel:0,title:"",autor:"",description:"",magic:parseInt("1020304",16),cliffLevel:0,cameraHeight:0,meta:"",map:[],startLocation:[]};for(var a=0;a<map.maxPlayers;a++){var e=Math.round(map.width/4*(a+.5)),t=Math.round(map.height/4*(a+.5));a>3&&(e=e,t=2*map.height-t),map.startLocation[a]={x:e%map.width,y:t%map.height}}for(var m=0;m<map.width;m++){map.map[m]=[];for(var r=0;r<map.height;r++)map.map[m][r]={h:10,s:1,o:0}}setTimeout(renderMapToCanvas,1)}function getCanvasWithContext(a){if(map.maxPlayers){var e={};return e.canvas=document.getElementById(a),e.scale=512/Math.max(map.width,map.height),e.canvas.style.width=map.width*e.scale+"px",e.canvas.style.height=map.height*e.scale+"px",e.canvas.getContext?(e.ctx=e.canvas.getContext("2d"),e.renderScaled=function(a){e.ctx.canvas.width=map.width*e.scale,e.ctx.canvas.height=map.height*e.scale;for(var t=e.ctx.createImageData(map.width*e.scale,map.height*e.scale),m=0;m<t.data.length;m+=4){var r=m/4,i=descale(r,e.scale),p=a({x:i.x,y:i.y,cell:map.map[i.x]&&map.map[i.x][i.y]});t.data[m+0]=p.r,t.data[m+1]=p.g,t.data[m+2]=p.b,t.data[m+3]=p.a}e.ctx.putImageData(t,0,0)},e.renderObjects=function(a){e.ctx.canvas.width=map.width*e.scale,e.ctx.canvas.height=map.height*e.scale;var t=e.ctx.createImageData(map.width*e.scale,map.height*e.scale);e.ctx.putImageData(t,0,0);for(var m=0;m<map.width*map.height;m+=1){var r=descale(m,1),i=Math.floor(e.scale/4),p={x:r.x*e.scale+i,y:r.y*e.scale+i,w:e.scale-2*i,h:e.scale-2*i};a({x:r.x,y:r.y,cell:map.map[r.x]&&map.map[r.x][r.y],ctx:e.ctx,area:p})}},e):!1}}function renderHeightMap(){var a=getCanvasWithContext("highmap");if(a){a.ctx.canvas.width=map.width,a.ctx.canvas.height=map.height;for(var e=a.ctx.createImageData(map.width,map.height),t=0;t<e.data.length;t+=4){var m=t/4,r=255*(map.map[m%map.width][Math.floor(m/map.width)].h/20);e.data[t+0]=r,e.data[t+1]=r,e.data[t+2]=r,e.data[t+3]=255}a.ctx.putImageData(e,0,0)}}function renderSurfaces(){var a=getCanvasWithContext("texture");a&&a.renderScaled(function(a){var e={},t=textures[a.cell.s-1];return t||(t=textures[0]),e.r=t.r,e.g=t.g,e.b=t.b,e.a=200,e})}function checkIsCliff(a,e){for(var t=a-1;a+1>t;t++)if(map.map[a]&&map.map[t])for(var m=e-1;e+1>m;m++)if(map.map[a][e]&&map.map[t][m]&&Math.abs(map.map[a][e].h-map.map[t][m].h)>=map.cliffLevel)return!0;return!1}function renderCliff(){var a=getCanvasWithContext("cliff");a&&a.renderScaled(function(a){var e={};return map.cliffLevel&&0!=map.cliffLevel?checkIsCliff(a.x,a.y)?(e.r=200,e.g=255,e.b=0,e.a=255):(e.r=0,e.g=0,e.b=0,e.a=0):(e.r=0,e.g=0,e.b=0,e.a=0),e})}function canvasDrawX(a,e,t,m,r,i){a.beginPath(),a.moveTo(e,t),a.lineWidth=1,a.lineTo(e+m,t+r),a.closePath(),a.strokeStyle=i,a.stroke(),a.beginPath(),a.moveTo(e,t+r),a.lineWidth=1,a.lineTo(e+m,t),a.closePath(),a.strokeStyle=i,a.stroke()}function renderObjects(){var a=getCanvasWithContext("objects");a&&a.renderObjects(function(a){1===a.cell.o?(a.ctx.fillStyle="#FF0000",a.ctx.fillRect(a.area.x,a.area.y,a.area.w,a.area.h)):2===a.cell.o?(a.ctx.fillStyle="#FFFFFF",a.ctx.fillRect(a.area.x,a.area.y,a.area.w,a.area.h)):3===a.cell.o?(a.ctx.fillStyle="#9370DB",a.ctx.fillRect(a.area.x,a.area.y,a.area.w,a.area.h)):4===a.cell.o?(a.ctx.fillStyle="#0000cc",a.ctx.fillRect(a.area.x,a.area.y,a.area.w,a.area.h)):5===a.cell.o?(a.ctx.fillStyle="#cccccc",a.ctx.fillRect(a.area.x,a.area.y,a.area.w,a.area.h)):6===a.cell.o?(a.ctx.fillStyle="#FFA500",a.ctx.fillRect(a.area.x,a.area.y,a.area.w,a.area.h)):7===a.cell.o?(a.ctx.fillStyle="#7fffd4",a.ctx.fillRect(a.area.x,a.area.y,a.area.w,a.area.h)):8===a.cell.o?(a.ctx.fillStyle="#8b2323",a.ctx.fillRect(a.area.x,a.area.y,a.area.w,a.area.h)):9===a.cell.o?(a.ctx.fillStyle="#7fff00",a.ctx.fillRect(a.area.x,a.area.y,a.area.w,a.area.h)):10===a.cell.o?(a.ctx.fillStyle="#ff1493",a.ctx.fillRect(a.area.x,a.area.y,a.area.w,a.area.h)):11===a.cell.o?canvasDrawX(a.ctx,a.area.x,a.area.y,a.area.w,a.area.h,"#ffb90f"):12===a.cell.o?canvasDrawX(a.ctx,a.area.x,a.area.y,a.area.w,a.area.h,"#bebebe"):13===a.cell.o?canvasDrawX(a.ctx,a.area.x,a.area.y,a.area.w,a.area.h,"#cc0000"):14===a.cell.o?canvasDrawX(a.ctx,a.area.x,a.area.y,a.area.w,a.area.h,"#0000cc"):15===a.cell.o?canvasDrawX(a.ctx,a.area.x,a.area.y,a.area.w,a.area.h,"#008b8b"):0===a.cell.o||console.log("Not supported object",a.cell.o)})}function descale(a,e){var t=map.width*e;return{x:Math.floor(a%t/e),y:Math.floor(Math.floor(a/t)/e)}}function renderWater(){var a=getCanvasWithContext("water");a&&a.renderScaled(function(a){var e={};return e.r=0,e.g=0,a.cell.h<=map.waterLevel-1.5?(e.b=51,e.a=255):a.cell.h<=map.waterLevel?(e.b=51,e.a=86):(e.b=0,e.a=0),e})}function renderStartPos(){var a=getCanvasWithContext("startpos");a&&(a.ctx.canvas.width=map.width*a.scale,a.ctx.canvas.height=map.height*a.scale,map.startLocation.forEach(function(e,t){a.ctx.beginPath();var m=parseInt(e.x*a.scale+a.scale/2),r=parseInt(e.y*a.scale+a.scale/2);a.ctx.moveTo(m-a.scale,r-a.scale),a.ctx.lineWidth=1,a.ctx.lineTo(m+a.scale,r+a.scale),a.ctx.strokeStyle=playerColors[t],a.ctx.stroke(),a.ctx.beginPath(),a.ctx.moveTo(m+a.scale,r-a.scale),a.ctx.lineWidth=1,a.ctx.lineTo(m-a.scale,r+a.scale),a.ctx.strokeStyle=playerColors[t],a.ctx.stroke()}))}function renderMapToCanvas(){if(map.maxPlayers){document.getElementById("version-field").value=map.version,document.getElementById("maxPlayers-field").value=map.maxPlayers,document.getElementById("width-field").value=map.width,document.getElementById("height-field").value=map.height,document.getElementById("altFactor-field").value=map.altFactor>100?map.altFactor/100:map.altFactor,document.getElementById("waterLevel-field").value=map.waterLevel,document.getElementById("title-field").value=map.title,document.getElementById("autor-field").value=map.autor,document.getElementById("description-field").value=map.description,map.version>1?(document.getElementById("description-field").maxLength=128,document.getElementById("description-field").rows=2,document.getElementById("magic-field").parentElement.style.display="block",document.getElementById("cliffLevel-field").parentElement.style.display="block",document.getElementById("cameraHeight-field").parentElement.style.display="block",document.getElementById("meta-field").parentElement.style.display="block",document.getElementById("magic-field").innerHTML="0x"+map.magic.toString(16),document.getElementById("cliffLevel-field").value=map.cliffLevel,document.getElementById("cameraHeight-field").value=map.cameraHeight<20?0:Math.min(map.cameraHeight,40),document.getElementById("meta-field").innerHTML=map.meta):(document.getElementById("description-field").maxLength=256,document.getElementById("description-field").rows=4,document.getElementById("magic-field").parentElement.style.display="none",document.getElementById("cliffLevel-field").parentElement.style.display="none",document.getElementById("cameraHeight-field").parentElement.style.display="none",document.getElementById("meta-field").parentElement.style.display="none");var a=[];map.startLocation.forEach(function(e,t){a.push('<li style="margin-bottom:8px;"><span class="playerTag" style="color:'+playerColors[t]+';">Player '+(t+1)+'</span>:  X = <input id="startLocation-field-player-'+t+'-x" type="number" value="'+e.x+'" onchange="updateFromFields()" min="0" max="'+(map.width-1)+'"> Y = <input id="startLocation-field-player-'+t+'-y" type="number" value="'+e.y+'" onchange="updateFromFields()" min="0" max="'+(map.height-1)+'"></li>')}),document.getElementById("startLocation-field").innerHTML=a.join(""),setTimeout(renderHeightMap,1),setTimeout(renderSurfaces,1),setTimeout(renderCliff,1),setTimeout(renderObjects,1),setTimeout(renderWater,1),setTimeout(renderStartPos,1)}}function handleFileSelect(a){a.stopPropagation(),a.preventDefault();var e=a.dataTransfer&&a.dataTransfer.files||document.getElementById("files").files;document.getElementById("files").files=e;var t=e[0];if(t.name.indexOf(".gbm")===t.name.length-4||t.name.indexOf(".mgm")===t.name.length-4)readBlob(t,function(a){var e={data:a,pos:0};map={},map.version=getInt32(e),map.maxPlayers=getInt32(e),map.width=getInt32(e),map.height=getInt32(e),map.altFactor=getInt32(e),map.waterLevel=getInt32(e),map.title=getString(e,128),map.title&&""!==map.title||(map.title=t.name.slice(0,t.name.length-4)),map.autor=getString(e,128),map.version<=1?(map.description=getString(e,256),map.magic=!1,map.cliffLevel=!1,map.cameraHeight=!1,map.meta=!1):(map.description=getString(e,128),map.magic=getInt32(e),map.cliffLevel=getInt32(e),map.cameraHeight=getInt32(e),map.meta=getString(e,116)),map.startLocation=[];for(var m=0;m<map.maxPlayers;m++)map.startLocation[m]={x:getInt32(e),y:getInt32(e)};for(map.map=[],m=0;m<map.width*map.height;m++)map.map[m%map.width]||(map.map[m%map.width]=[]),map.map[m%map.width][Math.floor(m/map.width)]||(map.map[m%map.width][Math.floor(m/map.width)]={}),map.map[m%map.width][Math.floor(m/map.width)].h=getFloat(e);for(m=0;m<map.width*map.height;m++)map.map[m%map.width]||(map.map[m%map.width]=[]),map.map[m%map.width][Math.floor(m/map.width)]||(map.map[m%map.width][Math.floor(m/map.width)]={}),map.map[m%map.width][Math.floor(m/map.width)].s=getInt8(e);for(m=0;m<map.width*map.height;m++)map.map[m%map.width]||(map.map[m%map.width]=[]),map.map[m%map.width][Math.floor(m/map.width)]||(map.map[m%map.width][Math.floor(m/map.width)]={}),map.map[m%map.width][Math.floor(m/map.width)].o=getInt8(e);setTimeout(renderMapToCanvas,1)});else if(t.name.indexOf(".png")===t.name.length-4){var m=new FileReader;m.onload=function(a){var e=new Image;e.onload=function(){if(map.width===e.width&&map.height===e.height){var a=document.getElementById("highmap"),t=512/Math.max(map.width,map.height);if(a.style.width=map.width*t+"px",a.style.height=map.height*t+"px",a.getContext){var m=a.getContext("2d");m.canvas.width=map.width,m.canvas.height=map.height,m.drawImage(e,0,0),updateHeightMapFromCanvas()}}else alert("Sizes do not match")},e.src=a.target.result},m.readAsDataURL(t)}}function contrastHighmap(a){var e=document.getElementById("highmap");if(e.getContext){for(var t=e.getContext("2d"),m=t.getImageData(0,0,map.width,map.height),r=m.data,i=259*(a+255)/(255*(259-a)),p=0;p<r.length;p+=4)r[p]=i*(r[p]-128)+128,r[p+1]=i*(r[p+1]-128)+128,r[p+2]=i*(r[p+2]-128)+128;t.putImageData(m,0,0),updateHeightMapFromCanvas()}}function updateHeightMapFromCanvas(){var a=document.getElementById("highmap");if(a.getContext){for(var e=a.getContext("2d"),t=e.getImageData(0,0,map.width,map.height),m=0;m<t.data.length;m+=4){var r=m/4;map.map[r%map.width][Math.floor(r/map.width)].h=20*((t.data[m+0]+t.data[m+1]+t.data[m+2])/3)/255}console.log(map),setTimeout(renderMapToCanvas,1)}}function updateFromFields(){var a=parseInt(document.getElementById("version-field").value);!a||1!==a&&2!==a||(map.version=a),map.startLocation.forEach(function(a,e){var t=parseInt(document.getElementById("startLocation-field-player-"+e+"-x").value),m=parseInt(document.getElementById("startLocation-field-player-"+e+"-y").value);t&&t>=0&&t<map.width&&(a.x=t),m&&m>=0&&m<map.height&&(a.y=m)});var e=parseInt(document.getElementById("maxPlayers-field").value);if(e&&(e>0||8>=e)){map.maxPlayers=e;for(var t=[],m=0;m<map.maxPlayers;m++)t[m]={x:map.startLocation[m]&&map.startLocation[m].x||0,y:map.startLocation[m]&&map.startLocation[m].y||0};map.startLocation=t}var r=parseInt(document.getElementById("width-field").value);if(r&&supportedMapSizes.indexOf(r)>-1)if(r<map.width&&window.confirm("Do you really want to make the map smaller? Data might be lost!")){for(var i=r;i<map.width;i++)map.map.splice(i,1);map.width=r}else if(r>map.width){for(var p=map.width;r>p;p++){map.map[p]=[];for(var n=0;n<map.height;n++)map.map[p][n]={h:10,s:1,o:0}}map.width=r}var l=parseInt(document.getElementById("height-field").value);if(l&&supportedMapSizes.indexOf(l)>-1)if(l<map.height&&window.confirm("Do you really want to make the map smaller? Data might be lost!")){for(var o=l;o<map.height;o++)for(var d=0;d<map.width;d++)map.map[d].splice(o,1);map.height=l}else if(l>map.height){for(var c=map.height;l>c;c++)for(var h=0;h<map.width;h++)map.map[h][c]={h:10,s:1,o:0};map.height=l}var s=parseFloat(parseFloat(document.getElementById("altFactor-field").value.replace(",",".")).toFixed(2));s&&s>=1&&100>=s&&(map.altFactor=s+""===s.toFixed(0)?s:100*s);var f=parseInt(document.getElementById("waterLevel-field").value);if(f>=0&&20>=f&&(map.waterLevel=f),map.title=(document.getElementById("title-field").value+"").substring(0,128),map.autor=(document.getElementById("autor-field").value+"").substring(0,128),1==map.version)map.description=(document.getElementById("description-field").value+"").substring(0,256),map.magic=0,map.cliffLevel=0,map.cameraHeight=0,map.meta="";else{map.description=(document.getElementById("description-field").value+"").substring(0,128),map.magic=parseInt("1020304",16);var g=parseInt(document.getElementById("cliffLevel-field").value);g>=0&&20>=g&&(map.cliffLevel=g);var v=parseInt(document.getElementById("cameraHeight-field").value);20>v?map.cameraHeight=0:v>=20&&40>=v&&(map.cameraHeight=v,map.meta="")}setTimeout(renderMapToCanvas,1)}function writeMap(){var a={data:"",pos:0};if(map.maxPlayers){writeInt32(a,map.version),writeInt32(a,map.maxPlayers),writeInt32(a,map.width),writeInt32(a,map.height),writeInt32(a,map.altFactor),writeInt32(a,map.waterLevel),writeString(a,map.title,128),writeString(a,map.autor,128),map.version<=1?writeString(a,map.description,256):(writeString(a,map.description,128),writeInt32(a,map.magic),writeInt32(a,map.cliffLevel),writeInt32(a,map.cameraHeight),writeString(a,map.meta,116));for(var e=0;e<map.maxPlayers;e++){var t=map.startLocation[e];t&&t.x>-1&&t.y>-1?(writeInt32(a,t.x),writeInt32(a,t.y)):(writeInt32(a,0),writeInt32(a,0))}for(e=0;e<map.width*map.height;e++)map.map[e%map.width]||(map.map[e%map.width]=[]),map.map[e%map.width][Math.floor(e/map.width)]||(map.map[e%map.width][Math.floor(e/map.width)]={}),writeFloat(a,map.map[e%map.width][Math.floor(e/map.width)].h);for(e=0;e<map.width*map.height;e++)map.map[e%map.width]||(map.map[e%map.width]=[]),map.map[e%map.width][Math.floor(e/map.width)]||(map.map[e%map.width][Math.floor(e/map.width)]={}),writeInt8(a,map.map[e%map.width][Math.floor(e/map.width)].s);for(e=0;e<map.width*map.height;e++)map.map[e%map.width]||(map.map[e%map.width]=[]),map.map[e%map.width][Math.floor(e/map.width)]||(map.map[e%map.width][Math.floor(e/map.width)]={}),writeInt8(a,map.map[e%map.width][Math.floor(e/map.width)].o);return a.data}}function closeCells(a,e,t){for(var m=0,r=e-1;e+1>=r;r++)for(var i=a-1;a+1>=i;i++)map.map[i]&&map.map[i][r]&&map.map[i][r].type==t&&(i!=e||r!=a)?m++:map.map[i]&&map.map[i][r]||i==e&&r==a||m++;return m}function next(){if(0>=changes)return map.startLocation.forEach(ensureStatpointLand),void 0;changes=0;for(var a=0;a<map.width;a++)for(var e=0;e<map.height;e++){var t=closeCells(a,e,"water");t<rule.water[0]&&"land"!=map.map[a][e].type?(map.map[a][e].type="land",changes++):t>rule.water[1]&&"land"==map.map[a][e].type&&(map.map[a][e].type="water",changes++),map.map[a][e].h="water"===map.map[a][e].type?Math.random()*(map.waterLevel-1.5):map.cliffLevel?map.waterLevel+Math.random()*map.cliffLevel:map.waterLevel+Math.random()*(20-map.waterLevel)}map.startLocation.forEach(ensureStatpointLand),setTimeout(renderMapToCanvas,1),setTimeout(next,1)}function ensureStatpointLand(a){var e=8,t=2,m=0,r=0;a.x-e<0&&(m=0-(a.x-e)),a.x+e>=map.width&&(m=0-(a.x+e+1-map.width)),a.y-e<0&&(r=0-(a.y-e)),a.y+e>=map.height&&(r=0-(a.y+e+1-map.height)),a.x=a.x+m,a.y=a.y+r,console.log(a.x,a.y,map.map[a.x][a.y],m,r);for(var i=a.x-e;i<=a.x+e;i++)for(var p=a.y-e;p<=a.y+e;p++)map.map[i]&&map.map[i][p]||console.log("loc",a.x,a.y,"offset",m,r,"i",i,"j",p,map.map[i]),map.map[i][p].type="land",map.map[i][p].h=10,map.cliffLevel>0&&(map.map[i][p].h=map.waterLevel+map.cliffLevel/2),map.map[i][p].s=3,(i===a.x-e||i===a.x+e||p===a.y-e||p===a.y+e)&&(map.map[i][p].s=2);for(var i=a.x-e+t;i<=a.x-t;i++)for(var p=a.y-e+t;p<=a.y-t;p++)-i-p>-a.x-a.y+e&&(map.map[i][p].o=11);for(var i=a.x+t;i<=a.x+e-t;i++)for(var p=a.y+t;p<=a.y+e-t;p++)i+p>a.x+a.y+e&&(map.map[i][p].o=12);for(var i=a.x+t;i<=a.x+e-t;i++)for(var p=a.y-e+t;p<=a.y-t;p++)i-p>a.x-a.y+e&&(map.map[i][p].o=1);for(var i=a.x-e+t;i<=a.x-t;i++)for(var p=a.y+t;p<=a.y+e-t;p++)-i+p>-a.x+a.y+e&&(map.map[i][p].o=2)}function randomIsland(){if(!(map.width<=0||map.height<=0||map.maxPlayer<1)&&map.startLocation){map.map=[],map.title="generaded_"+Math.random(),map.author="http://muwns.eu/mgm/";for(var a=0;a<map.width;a++){map.map[a]=[];for(var e=0;e<map.height;e++)map.map[a][e]={},map.map[a][e].type=Math.random()<.4?"land":"water",(0==a||0==e||a==map.width-1||e==map.height-1)&&(map.map[a][e].type="water"),map.map[a][e].h="water"===map.map[a][e].type?0:10,map.map[a][e].s=1,map.map[a][e].o=0}map.startLocation.forEach(ensureStatpointLand),changes=1,setTimeout(renderMapToCanvas,1),setTimeout(next,1)}}function handleDragOver(a){a.stopPropagation(),a.preventDefault(),a.dataTransfer.dropEffect="copy"}var map={};document.getElementById("btnSaveHeightmap").addEventListener("click",function(){var a=getCanvasWithContext("highmap");a&&(this.href=a.canvas.toDataURL(),this.download=map.title+".hmap.png")},!1),document.getElementById("btnSaveMap").addEventListener("click",function(){this.href="data:application/x-megaglest-map;base64,"+window.btoa(writeMap()),this.download=map.title+".mgm"},!1);var textures=[{r:0,g:102,b:0,name:"Grass"},{r:51,g:76,b:0,name:"Secondary Grass"},{r:76,g:38,b:0,name:"Road"},{r:89,g:89,b:89,name:"Stone"},{r:89,g:64,b:38,name:"Custom"}],playerColors=[rgbToHex(255,0,0),rgbToHex(0,0,255),rgbToHex(0,255,0),rgbToHex(255,255,0),rgbToHex(255,255,255),rgbToHex(0,255,255),rgbToHex(255,127,0),rgbToHex(255,0,255)],supportedMapSizes=[16,32,64,128,256,512],changes=1,rule={water:[5,6]},dropZone=document;dropZone.addEventListener("dragover",handleDragOver,!1),dropZone.addEventListener("drop",handleFileSelect,!1),init();
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+#byte_content {
+	margin: 5px 0;
+	max-height: 100px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+#byte_range { margin-top: 5px; }
+#drop_zone {
+	border: 2px dashed #bbb;
+	border-radius: 5px;
+	padding: 25px;
+	text-align: center;
+	font: 20pt bold 'Vollkorn';
+	color: #bbb;
+}
+#drop_zone>#files{
+	display:none;
+}
+p>label{
+	display:inline-block;
+	font-weight:bold;
+	width: 30%;
+}
+p>label:after{
+	content:': ';
+}
+#metadataArea{
+	width:40%;
+	padding:0;
+	margin:0;
+	border:none;
+	display:inline-block;
+}
+#previewArea{
+	width:512px;
+	height:512px;
+	padding:0;
+	margin:0;
+	border:none;
+	display:inline-block;
+	position:relative;
+}
+#previewArea>canvas{
+	max-width:512px;
+	max-height:512px;
+	position:absolute;
+	top:0;
+	left:0;
+}
+#previewArea.hideHeightMap>#highmap{
+	display:none;
+}
+#previewArea.hideTexture>#texture{
+	display:none;
+}
+#previewArea.hideWater>#water{
+	display:none;
+}
+#previewArea.hideCliff>#cliff{
+	display:none;
+}
+#previewArea.hideObjects>#objects{
+	display:none;
+}
+#previewArea.hideStartPos>#startpos{
+	display:none;
+}
+
+
+#previewArea>#control{
+	position:absolute;
+	bottom: -20px;
+	height:20px;
+}
+#previewArea>#control>button:before{
+	content:'Hide ';
+}
+#previewArea.hideHeightMap>#control>button.hideHeightMap:before,
+#previewArea.hideTexture>#control>button.hideTexture:before,
+#previewArea.hideWater>#control>button.hideWater:before,
+#previewArea.hideCliff>#control>button.hideCliff:before,
+#previewArea.hideObjects>#control>button.hideObjects:before,
+#previewArea.hideStartPos>#control>button.hideStartPos:before
+{
+	content:'Show ';
+}
+#startLocation-field .playerTag{
+	background:#cdcdcd;
+	padding:5px;
+}
